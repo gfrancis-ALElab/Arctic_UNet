@@ -17,7 +17,7 @@ import geopandas as gpd
 import rasterio
 import rasterio.features as features
 from rasterio.features import shapes
-from shapely.geometry import 
+from shapely.geometry import shape
 from shapely.ops import cascaded_union
 from PIL import Image
 import glob
