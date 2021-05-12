@@ -2,7 +2,12 @@
 """
 Created on Fri Apr 23 10:06:45 2021
 
-@author: gfrancis
+
+Functions for filtering tiles if containing areas of no data
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
 
@@ -18,7 +23,7 @@ import matplotlib.pyplot as plt
 from shapely import speedups
 speedups.disable()
 from shapely.geometry import shape
-# import datetime
+
 
 import warnings
 warnings.filterwarnings("ignore")

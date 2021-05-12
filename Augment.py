@@ -2,7 +2,12 @@
 """
 Created on Wed Apr 28 14:41:41 2021
 
-@author: gfrancis
+
+Function to expand training library with augmented tile-mask pairs
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
 

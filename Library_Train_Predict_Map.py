@@ -2,7 +2,12 @@
 """
 Created on Fri Apr 30 17:22:36 2021
 
-@author: gfrancis
+
+Full process sccript for building training library, training, & processing predition map
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
 
@@ -22,9 +27,10 @@ import Predict_and_Process
 
 
 
-
-Train_AOI = 'Banks_NIR_G_R'
-Predict_AOI = 'Banks_NIR_G_R'
+### Name for Sequence
+### (area abr. & date YYYYMMDD)
+Train_AOI = 'WR20200818'
+Predict_AOI = 'WR20200818'
 
 
 
@@ -32,13 +38,13 @@ Predict_AOI = 'Banks_NIR_G_R'
 
 ###                 Training Library Build Settings
 ##############################################################################
-### INPUT DIRECTORIES: training image (.GTIF), ground truths (.SHP)
-img = home + r'\Documents\Planet_data\Banks\Banks_Island_mosaic.tif_NIR_G_R.tif'
-truths = home + r'\Documents\Planet_data\Banks\Banks_island_slumps.shp'
+### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
+img = home + r'\Documents\Planet\WR\training\20200818_mosaic_NIR_G_R.tif'
+truths = home + r'\Documents\Planet\WR\training\ground_truths\Willow_River_Thaw_Slumps_poly.shp'
 
 
 ### Training Library OUTPUT DIRECTORY
-lib_dir = home + r'\Documents\output\UNet_Training_Library_' + Train_AOI
+lib_dir = home + r'\Documents\Planet\WR\Training_Library_' + Train_AOI
 
 ### PARAMETERS:
 ###    For: Split
@@ -47,7 +53,7 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 50555 ### number of augmented images to include in library
+aug = 40000 ### number of augmented images to include in library
 ##############################################################################
 if True:
     Build_Library.create_library(img, truths, lib_dir, w, Ovr, f, aug)
@@ -70,8 +76,8 @@ e = 20 ### epochs
 name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_AOI
 
 ### DIRECTORIES FOR MODEL TRAINING HISTORY
-callback_dir = home + r'\Documents\output\model_training_history\ ' + name
-save_dir = home + r'\Documents\output\saved_models'
+callback_dir = lib_dir + '\\' + name
+save_dir = lib_dir + r'\saved_models'
 ##############################################################################
 if True:
     UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
@@ -84,12 +90,12 @@ if True:
 
 ###             Deploy Trained Model & Prediction Map Settings
 ##############################################################################
-### INPUT DIRECTORY: Image for predition (.GTIF)
+### INPUT DIRECTORY: Image for predition (.GEOTIFF)
 # img = home + '\\Documents\\Planet_data\\WR\\20200818_mosaic_8bit_rgb.tif'
 img = img
 
 ### OUTPUT DIRECTORY (save location)
-out_dir = home + r'\Documents\output\Prediction_Map_%s_%s'%(Predict_AOI,name)
+out_dir = lib_dir + r'\Prediction_Map_%s_%s'%(Predict_AOI,name)
 
 ### SAVED MODEL NAME & DIRECTORY
 model_name = name + '.h5'

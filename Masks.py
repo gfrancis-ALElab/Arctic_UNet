@@ -2,21 +2,24 @@
 """
 Created on Fri Apr 23 09:18:43 2021
 
-@author: gfrancis
+
+Function that makes corresponding mask for image tiles that overalp ground truths
+
+- Masks are saved as .GEOTIFF (red band only) & .PNG (monochromatic) for model input.
+- Corresponding .JPEG copies of original tiles are also created for model input
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
 import os
-# os.environ['PROJ_LIB'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data\\proj'
-# os.environ['GDAL_DATA'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data'
 import numpy as np
 import geopandas as gpd
 import rasterio
 import rasterio.features as features
 import pandas as pd
-# from shapely import speedups
-# speedups.disable()
 from shapely.geometry import shape
-# import datetime
 from PIL import Image
 import glob
 import shutil
@@ -27,13 +30,6 @@ import shutil
 def create_masks(truths_path, lib_dir, pics_dir, masks_dir, img):
 
     truths = gpd.read_file(truths_path)
-    # sample_tif = rasterio.open(pics_dir + '\\0.tif')
-    
-    # assert truths.crs == sample_tif.crs
-    
-    # # if truths.crs != sample_tif.crs:
-    # truths = truths.to_crs(sample_tif.crs)
-    # sample_tif.close()
 
     total_tiles = len([name for name in os.listdir(pics_dir)
                    if os.path.isfile(pics_dir + '\\' + name)])
@@ -85,6 +81,7 @@ def create_masks(truths_path, lib_dir, pics_dir, masks_dir, img):
 
             joined_tiles = joined_tiles.geometry.append(raster_outline.geometry)
 
+            ### original masks saved as .GEOTIF in red band only
             with rasterio.open(saved_mask, 'w+', **meta) as out:
                 out_arr = out.read(1)
 

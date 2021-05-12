@@ -2,12 +2,15 @@
 """
 Created on Thu Apr 29 14:54:19 2021
 
-@author: gfrancis
+
+Workflow for deploying trained model on input image & building map from predictions
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
 import os
-# os.environ['PROJ_LIB'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data\\proj'
-# os.environ['GDAL_DATA'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data'
 import Split
 import Filter
 import Convert
@@ -15,9 +18,6 @@ import UNet_Predict
 import Process_Map
 
 
-
-# start = datetime.datetime.now()
-# print(str(start))
 
 
 

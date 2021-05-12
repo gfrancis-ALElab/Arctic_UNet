@@ -2,7 +2,18 @@
 """
 Created on Thu Apr 22 11:54:03 2021
 
-@author: gfrancis
+
+Functions for generating input training data, building model layers, training & saving the model
+
+- Includes callbacks for training checkpoints & tensorboard
+- Trained model is saved as .h5
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
+
+Model architecture inspired and modified from Keras computer vision example:
+    https://keras.io/examples/vision/oxford_pets_image_segmentation/
 """
 
 import os

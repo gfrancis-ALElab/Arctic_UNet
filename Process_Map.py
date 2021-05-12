@@ -2,24 +2,23 @@
 """
 Created on Fri Apr 30 09:30:27 2021
 
-@author: gfrancis
+
+Functions to create .shp map from predition masks using corresponding original tile meta data
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
 
 import os
-os.environ['PROJ_LIB'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data\\proj'
-os.environ['GDAL_DATA'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data'
 import numpy as np
 import geopandas as gpd
 import rasterio
 import rasterio.features as features
 from rasterio.features import shapes
-import rasterio.plot
-import pandas as pd
-# from shapely import speedups
-# speedups.disable()
-from shapely.geometry import shape
-# import datetime
+from shapely.geometry import 
+from shapely.ops import cascaded_union
 from PIL import Image
 import glob
 import shutil
@@ -36,7 +35,7 @@ def get_name(file_location):
 
 
 
-### TODO: dissolve .shps here
+
 def combine_shps(map_dir):
     
     input_shp_paths = sorted([
@@ -53,7 +52,9 @@ def combine_shps(map_dir):
         S = gpd.read_file(input_shp_paths[i])
         joined_shps = joined_shps.geometry.append(S.geometry)
     
-    joined_shps.to_file(map_dir + '\\map.shp')
+    print('Cascading predictions...')
+    joined_shps = gpd.GeoSeries(cascaded_union(joined_shps['geometry']))
+    joined_shps.to_file(map_dir + '\\prediction_map.shp')
     print('.shp map saved.')
     
     return

@@ -2,19 +2,19 @@
 """
 Created on Thu Apr 29 15:37:37 2021
 
-@author: gfrancis
+
+Short Function to create .JPEG copies of input image tiles for model input
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
 
 import os
-os.environ['PROJ_LIB'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data\\proj'
-os.environ['GDAL_DATA'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data'
-
-# import datetime
 from PIL import Image
 import glob
 import numpy as np
-
 
 
 
@@ -25,12 +25,6 @@ def to_jpg(lib):
     total_tiles = len([name for name in os.listdir(lib)
                    if os.path.isfile(lib + '\\' + name)])
     
-    
-    ### Re-number 0->N
-    # count = 0
-    # for pic in glob.glob(lib + '\\*.tif'):
-    #     os.rename(pic, lib + '\\%s.tif'%count)
-    #     count += 1
     
     print('Making .jpg copies...')
     for i in range(total_tiles):

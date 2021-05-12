@@ -2,18 +2,20 @@
 """
 Created on Mon May 10 14:23:12 2021
 
-@author: gfrancis
+
+Functions and workfflow to gauge performance metrics of trained moadel
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
-
-import numpy as np
-import matplotlib.pyplot as plt
 
 import os
 os.environ['PROJ_LIB'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data\\proj'
 os.environ['GDAL_DATA'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data'
 import geopandas as gpd
-
+import numpy as np
 from shapely import speedups
 speedups.disable()
 from shapely.ops import cascaded_union
@@ -41,14 +43,14 @@ def process(path_t, path_p, path_AOI):
     aoi_spec = aoi.loc[aoi['area']==aoi['area'].max()]
     
     
-    print('cascading truths...')
+    print('Cascading truths...')
     truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
     truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
     
     ### for non-cascaded .shp predictions
-    print('cascading predictions...')
-    predicted = gpd.GeoSeries(cascaded_union(predicted['geometry']))
-    predicted = gpd.GeoDataFrame(geometry=predicted, crs=crs)
+    # print('cascading predictions...')
+    # predicted = gpd.GeoSeries(cascaded_union(predicted['geometry']))
+    # predicted = gpd.GeoDataFrame(geometry=predicted, crs=crs)
     
 
     assert truths.crs == predicted.crs
@@ -56,8 +58,8 @@ def process(path_t, path_p, path_AOI):
     assert aoi_spec.crs == predicted.crs
     
     ### in case the aoi is smaller than truths domain
-    print('clipping truths')
-    truths = gpd.clip(truths, aoi)
+    # print('Clipping truths to AOI')
+    # truths = gpd.clip(truths, aoi)
     
     print('Calculating areasfor:\nBetween Truths...')
     between_t = gpd.overlay(aoi_spec, truths, how='difference')
@@ -77,11 +79,11 @@ def process(path_t, path_p, path_AOI):
 
 
 ##############################################################################
-name = 'Banks_NIR_G_R_20e_50555a'
+name = 
 ### INPUT DIRECTORIES
-truths = r'C:\Users\gfrancis\Documents\output\UNet_Training_Library_Banks_NIR_G_R\map\truths.shp'
-predicted = r'C:\Users\gfrancis\Documents\output\Prediction_Map_Banks_NIR_G_R_UNet_100x100_Ovr0_rmsprop_21b_20e_50555a_Banks_NIR_G_R\map\map.shp'
-AOI = r'C:\Users\gfrancis\Documents\Planet_data\Banks\AOI_from_Banks_Island_mosaic_8bit_rgb\Banks_Island_mosaic_8bit_rgb_AOI.shp'
+truths =
+predicted = 
+AOI = 
 ##############################################################################
 
 HOME = os.path.expanduser('~')

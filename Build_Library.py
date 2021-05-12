@@ -2,24 +2,20 @@
 """
 Created on Fri Apr 23 10:20:42 2021
 
-Workflow to build library for Arctic_UNet model
 
-@author: gfrancis
+Workflow to build training library for Arctic_UNet model
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
 import os
-# os.environ['PROJ_LIB'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data\\proj'
-# os.environ['GDAL_DATA'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data'
 import Split
 import Filter
 import Masks
 import Augment
-# import datetime
 
-
-
-# start = datetime.datetime.now()
-# print(str(start))
 
 
 

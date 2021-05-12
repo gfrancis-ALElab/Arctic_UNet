@@ -2,7 +2,12 @@
 """
 Created on Thu Apr 29 14:40:06 2021
 
-@author: gfrancis
+
+Functions to deploy model on imput image tiles & re-pair each prediction with each input tile
+
+
+@author: Grant Francis
+email: gfrancis@uvic.ca
 """
 
 import os
