@@ -55,8 +55,7 @@ f = 'GTIFF' ### output format
 ###    For: Augmentation
 aug = 40000 ### number of augmented images to include in library
 ##############################################################################
-if True:
-    Build_Library.create_library(img, truths, lib_dir, w, Ovr, f, aug)
+Build_Library.create_library(img, truths, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -79,8 +78,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_AOI
 callback_dir = lib_dir + '\\' + name
 save_dir = lib_dir + r'\saved_models'
 ##############################################################################
-if True:
-    UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
+UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -107,8 +105,7 @@ w = 50 ### width (pixels)
 Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 ##############################################################################
-if True:
-    Predict_and_Process.do_your_thang(img, out_dir, model_name, saved_model, w, Ovr, f)
+Predict_and_Process.do_your_thang(img, out_dir, model_name, saved_model, w, Ovr, f)
 
 
 
