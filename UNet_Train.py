@@ -56,8 +56,7 @@ class generator(keras.utils.Sequence):
         for j, path in enumerate(batch_target_img_paths):
             img = load_img(path, target_size=self.img_size, color_mode="grayscale")
             y[j] = np.expand_dims(img, 2)
-            # Ground truth labels are 1, 2, 3. Subtract one to make them 0, 1, 2:
-            # y[j] += 1
+
         return x, y
     
     
@@ -66,16 +65,16 @@ class generator(keras.utils.Sequence):
 def get_model(img_size, num_classes):
     inputs = keras.Input(shape=img_size + (3,))
 
-    ### [First half of the network: downsampling inputs] ###
+    ### First half of the network: downsampling inputs
 
-    # Entry block
+    ### Entry block
     x = layers.Conv2D(32, 3, strides=2, padding="same")(inputs)
     x = layers.BatchNormalization()(x)
     x = layers.Activation("relu")(x)
 
-    previous_block_activation = x  # Set aside residual
+    previous_block_activation = x  ### Set aside residual
 
-    # Blocks 1, 2, 3 are identical apart from the feature depth.
+    ### Blocks 1, 2, 3 are identical apart from the feature depth.
     for filters in [64, 128, 256]:
         x = layers.Activation("relu")(x)
         x = layers.SeparableConv2D(filters, 3, padding="same")(x)
@@ -87,15 +86,15 @@ def get_model(img_size, num_classes):
 
         x = layers.MaxPooling2D(3, strides=2, padding="same")(x)
 
-        # Project residual
+        ### Project residual
         residual = layers.Conv2D(filters, 1, strides=2, padding="same")(
             previous_block_activation
         )
-        x = layers.add([x, residual])  # Add back residual
-        previous_block_activation = x  # Set aside next residual
+        x = layers.add([x, residual])  ### Add back residual
+        previous_block_activation = x  ### Set aside next residual
 
-    ### [Second half of the network: upsampling inputs] ###
 
+    ### Second half of the network: upsampling inputs
     for filters in [256, 128, 64, 32]:
         x = layers.Activation("relu")(x)
         x = layers.Conv2DTranspose(filters, 3, padding="same")(x)
@@ -107,16 +106,16 @@ def get_model(img_size, num_classes):
 
         x = layers.UpSampling2D(2)(x)
 
-        # Project residual
+        ### Project residual
         residual = layers.UpSampling2D(2)(previous_block_activation)
         residual = layers.Conv2D(filters, 1, padding="same")(residual)
-        x = layers.add([x, residual])  # Add back residual
-        previous_block_activation = x  # Set aside next residual
+        x = layers.add([x, residual])  ### Add back residual
+        previous_block_activation = x  ### Set aside next residual
 
-    # Add a per-pixel classification layer
+    ### Add a per-pixel classification layer
     outputs = layers.Conv2D(num_classes, 3, activation="softmax", padding="same")(x)
 
-    # Define the model
+    ### Define the model
     model = keras.Model(inputs, outputs)
     return model
 
@@ -150,7 +149,6 @@ def get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e):
     )
     
     
-    
     n = len(input_img_paths)
     print('\nNumber of training tile-mask pairs: %s'%n)
     
@@ -162,18 +160,18 @@ def get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e):
         print(input_path, "|", target_path)
     
     
-    
-    # Free up RAM in case the model definition cells were run multiple times
+    ### Free up RAM in case the model definition cells were run multiple times
     keras.backend.clear_session()
     
-    img_size = (160, 160) ### Don't change this. This is the RESIZE for model input
-    # Build model
+    
+    ### Don't change this. Images are RESIZED to this for model input
+    img_size = (160, 160)
+    ### Build model
     model = get_model(img_size, num_classes)
     model.summary()
     
     
-    
-    # Split our img paths into a training and a validation set
+    ### Split our img paths into a training and a validation set
     val_samples = np.int(n*0.2) ### 80-20 split
     random.Random(n).shuffle(input_img_paths)
     random.Random(n).shuffle(target_img_paths)
@@ -183,17 +181,15 @@ def get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e):
     val_target_img_paths = target_img_paths[-val_samples:]
     
     
-    # Instantiate data Sequences for each split
+    ### Instantiate data Sequences for each split
     train_gen = generator(batch_size, img_size, train_input_img_paths, train_target_img_paths)
     val_gen = generator(batch_size, img_size, val_input_img_paths, val_target_img_paths)
     
     
-    
-    # Configure the model for training.
-    # We use the "sparse" version of categorical_crossentropy
-    # because our target data is integers.
+    ### Configure the model for training.
+    ### We use the "sparse" version of categorical_crossentropy
+    ### because our target data is integers.
     model.compile(optimizer='rmsprop', loss="sparse_categorical_crossentropy")
-    
     
     
     tensorboard_callback = keras.callbacks.TensorBoard(log_dir=callback_dir, histogram_freq=1)
@@ -202,9 +198,8 @@ def get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e):
     
     
     print('\n\nStarting Training. Library size: %s tile-mask pairs\n...\n\n'%n)
-    # Train the model, doing validation at the end of each epoch.
+    ### Train the model, doing validation at the end of each epoch.
     model.fit(train_gen, epochs=epochs, validation_data=val_gen, callbacks=callbacks, verbose=2)
-    
     
     
     model.save(save_dir + '\\%s.h5'%name)
