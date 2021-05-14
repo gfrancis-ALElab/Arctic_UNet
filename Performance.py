@@ -43,7 +43,7 @@ def process(path_t, path_p, path_AOI):
     aoi_spec = aoi.loc[aoi['area']==aoi['area'].max()]
     
     
-    print('Cascading truths...')
+    print('\nCascading truths...')
     truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
     truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
     
@@ -79,25 +79,25 @@ def process(path_t, path_p, path_AOI):
 
 
 ##############################################################################
-name = 
+name = 'WR_training_eval_40000_cascadedTruths'
 ### INPUT DIRECTORIES
-truths =
-predicted = 
-AOI = 
+truths = r'C:\Users\gfrancis\Documents\Planet\WR\training\ground_truths\Willow_River_Thaw_Slumps_poly.shp'
+predicted = r'C:\Users\gfrancis\Documents\Planet\WR\Training_Library_WR20200818\Prediction_Map_WR20200818_UNet_100x100_Ovr0_rmsprop_21b_20e_40000a_WR20200818\map\cascaded_map.shp'
+AOI = r'C:\Users\gfrancis\Documents\Planet\WR\20200818_mosaic_NIR_G_R_AOI.shp'
 ##############################################################################
 
 HOME = os.path.expanduser('~')
-RESULTS_DIR = '\Documents\output\Performance_Results_%s' % (name)
+RESULTS_DIR = r'\Documents\Planet\WR\Performance_Results_%s' % (name)
 path = HOME+RESULTS_DIR
 
 
 if os.path.isdir(path) is False:
     os.mkdir(path)
-    print ('Successfully created the directory \'%s\'' % path)
+    print ('\nSuccessfully created save directory: \'%s\'' % path)
     SAVE_DIR = path+'\\'
 
 else:
-    print('Directory: \'%s\' already exists.' % path)
+    print('\nDirectory: \'%s\' already exists.' % path)
     input('Continue?')
     SAVE_DIR = path+'\\'
 
