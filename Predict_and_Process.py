@@ -15,7 +15,7 @@ import Split
 import Filter
 import Convert
 import UNet_Predict
-import Process_Map
+import Map
 
 
 
@@ -69,9 +69,9 @@ def do_your_thang(img, lib_dir, model_name, saved_model, w, Ovr, f):
     UNet_Predict.deploy_model(saved_model, tiles_dir, pred_dir)
     
     
-    ### TODO: merge prediction shapes into smooth output
+    
     ### create map from prediction tiles
-    Process_Map.build_map(tiles_dir, pred_dir, map_dir)
+    Map.build_map(tiles_dir, pred_dir, map_dir)
     
     return
 

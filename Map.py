@@ -18,6 +18,8 @@ import rasterio
 import rasterio.features as features
 from rasterio.features import shapes
 from shapely.geometry import shape
+from shapely import speedups
+speedups.disable()
 from shapely.ops import cascaded_union
 from PIL import Image
 import glob
@@ -52,10 +54,16 @@ def combine_shps(map_dir):
         S = gpd.read_file(input_shp_paths[i])
         joined_shps = joined_shps.geometry.append(S.geometry)
     
-    print('Cascading predictions...')
-    joined_shps = gpd.GeoSeries(cascaded_union(joined_shps['geometry']))
     joined_shps.to_file(map_dir + '\\prediction_map.shp')
-    print('.shp map saved.')
+    print('Prediction map saved as .SHP')
+    
+    print('\nCascading predictions...')
+    Map = gpd.read_file(map_dir + '\\prediction_map.shp')
+    crs = Map.crs
+    Map = gpd.GeoSeries(cascaded_union(Map['geometry']))
+    Map = gpd.GeoDataFrame(geometry=Map, crs=crs)
+    Map.to_file(map_dir + '\\cascaded_map.shp')
+    print('Cascaded map saved as .SHP')
     
     return
 
