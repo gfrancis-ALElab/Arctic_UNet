@@ -29,7 +29,7 @@ import Predict_and_Process
 
 ### Name for Sequence
 ### (area abr. & date YYYYMMDD)
-Train_AOI = 'WR20200818'
+Train_AOI = 'WR20200818_60000'
 Predict_AOI = Train_AOI
 
 
@@ -38,7 +38,7 @@ Predict_AOI = Train_AOI
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-img = home + r'\Documents\Planet\WR\training_data\20200818_mosaic_NIR_G_R.tif'
+img = home + r'\Documents\Planet\WR\training_data\4band_mosaic\20200818_mosaic.tif'
 truths = home + r'\Documents\Planet\WR\training_data\ground_truths\Willow_River_Thaw_Slumps_poly.shp'
 
 
@@ -52,7 +52,7 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 500 ### number of augmented images to include in library
+aug = 60000 ### number of augmented images to include in library
 ##############################################################################
 Build_Library.create_library(img, truths, lib_dir, w, Ovr, f, aug)
 
