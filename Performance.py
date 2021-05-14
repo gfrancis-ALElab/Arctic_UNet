@@ -61,7 +61,7 @@ def process(path_t, path_p, path_AOI):
     # print('Clipping truths to AOI')
     # truths = gpd.clip(truths, aoi)
     
-    print('Calculating areasfor:\nBetween Truths...')
+    print('Calculating areas for:\nBetween Truths...')
     between_t = gpd.overlay(aoi_spec, truths, how='difference')
     
     print('True Positives...')
