@@ -27,10 +27,9 @@ import Predict_Workflow
 
 
 
-### Name for Sequence
+### Name for training sequence
 ### (area abr. & date YYYYMMDD)
-Train_AOI = 'Banks_40000'
-Predict_AOI = Train_AOI
+Train_name = 'Banks_40000'
 
 
 
@@ -44,7 +43,7 @@ truths = home + r'\Documents\Planet\Banks\Data\ground_truths\Banks_Island_slumps
 
 
 ### Training Library OUTPUT DIRECTORY
-lib_dir = home + r'\Documents\Planet\Banks\Training_Library_' + Train_AOI
+lib_dir = home + r'\Documents\Planet\Banks\Training_Library_' + Train_name
 
 ### PARAMETERS:
 ###    For: Split
@@ -72,7 +71,7 @@ b = 21 ### batch size
 e = 20 ### epochs
 
 ### NAME FOR RUN:   (format as: model_dim_opt_batch_epochs_#augs_areaYYMMDD)
-name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_AOI
+name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 
 ### DIRECTORIES FOR MODEL TRAINING HISTORY
 callback_dir = lib_dir + '\\' + name
@@ -89,7 +88,7 @@ UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
 ###             Deploy Trained Model & Prediction Map Settings
 ##############################################################################
 ### OUTPUT DIRECTORY (single map save location)
-out_dir = lib_dir + r'\Prediction_Map_%s_%s'%(Predict_AOI,name)
+out_dir = lib_dir + r'\Prediction_Map_%s_%s'%(Train_name,name)
 
 ### SAVED MODEL NAME & DIRECTORY
 model_name = name + '.h5'
