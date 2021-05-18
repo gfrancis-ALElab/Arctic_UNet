@@ -22,7 +22,7 @@ os.environ['GDAL_DATA'] = home + r'\Appdata\Roaming\Python\Python37\site-package
 
 import Build_Library
 import UNet_Train
-import Predict_and_Process
+import Predict_Workflow
 
 
 
@@ -38,8 +38,9 @@ Predict_AOI = Train_AOI
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-img = home + r'\Documents\Planet\WR\Training_data\20200818_mosaic_NIR_G_R.tif'
-truths = home + r'\Documents\Planet\WR\training_data\ground_truths\Willow_River_Thaw_Slumps_poly.shp'
+img_dir = home + r'\Documents\Planet\WR\data'
+img = home + r'\Documents\Planet\WR\data\20200818_mosaic_NIR_G_R.tif'
+truths = home + r'\Documents\Planet\WR\data\ground_truths\Willow_River_Thaw_Slumps_poly.shp'
 
 
 ### Training Library OUTPUT DIRECTORY
@@ -87,9 +88,8 @@ UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
 
 ###             Deploy Trained Model & Prediction Map Settings
 ##############################################################################
-### INPUT DIRECTORY: Image for predition (.GEOTIFF)
-# img = home + '\\Documents\\Planet_data\\WR\\20200818_mosaic_8bit_rgb.tif'
-img = img
+### INPUT DIRECTORY: Images for predition (folder containing .GEOTIFF(s)...)
+img_dir = r''
 
 ### OUTPUT DIRECTORY (save location)
 out_dir = lib_dir + r'\Prediction_Map_%s_%s'%(Predict_AOI,name)
@@ -103,8 +103,11 @@ saved_model = save_dir + '\\' + model_name
 w = 50 ### width (pixels)
 Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
+
+### Build Timeline?
+timeline = True
 ##############################################################################
-Predict_and_Process.do_your_thang(img, out_dir, model_name, saved_model, w, Ovr, f)
+Predict_Workflow.do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline)
 
 
 

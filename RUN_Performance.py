@@ -57,18 +57,18 @@ def process(path_t, path_p, path_AOI):
     assert aoi_spec.crs == truths.crs
     assert aoi_spec.crs == predicted.crs
     
-    ### in case the aoi is smaller than truths domain
+    ### if aoi is smaller than the truths domain
     # print('Clipping truths to AOI')
     # truths = gpd.clip(truths, aoi)
     
     print('Calculating areas for:\nBetween Truths...')
     between_t = gpd.overlay(aoi_spec, truths, how='difference')
     
-    print('True Positives...')
+    print('...True Positives...')
     TP = gpd.overlay(predicted, between_t, how='difference')
-    print('False Positives...')
+    print('...False Positives...')
     FP = gpd.overlay(predicted, truths, how='difference')
-    print('False Negatives...')
+    print('...False Negatives...')
     FN = gpd.overlay(truths, predicted, how='difference')
 
     prec = area(TP)/(area(TP)+area(FP))
@@ -79,10 +79,10 @@ def process(path_t, path_p, path_AOI):
 
 
 ##############################################################################
-name = 'WR_training_eval_500_cascadedTruths'
+name = 'WR_training_eval_60000'
 ### INPUT DIRECTORIES
 truths = r'C:\Users\gfrancis\Documents\Planet\WR\training_data\ground_truths\Willow_River_Thaw_Slumps_poly.shp'
-predicted = r'C:\Users\gfrancis\Documents\Planet\WR\Training_Library_WR20200818_500\Prediction_Map_WR20200818_UNet_100x100_Ovr0_rmsprop_21b_20e_500a_WR20200818\map\cascaded_map.shp'
+predicted = r'C:\Users\gfrancis\Documents\Planet\WR\Training_Library_WR20200818_60000\Prediction_Map_WR20200818_60000_UNet_100x100_Ovr0_rmsprop_21b_20e_60000a_WR20200818_60000\map\cascaded_map.shp'
 AOI = r'C:\Users\gfrancis\Documents\Planet\WR\20200818_mosaic_NIR_G_R_AOI.shp'
 ##############################################################################
 

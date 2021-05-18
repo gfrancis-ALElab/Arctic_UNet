@@ -34,10 +34,76 @@ def data_check(M):
     return ((len(np.unique(M)) == 1) and (np.unique(M)[0] != 0))
 
 
-def remove_imperfect(lib):
+def remove(lib, overlap_only=False):
     
     total_tiles = len([name for name in os.listdir(lib)
                        if os.path.isfile(lib + '\\' + name)])
+    
+    
+    if overlap_only: ### keep only overlap tiles
+        
+        truths = gpd.read_file(truths_path)
+    
+    
+        print('\nFiltering non-overlapping tiles...')
+        
+        count = 0
+        r = 0
+        for pic in glob.glob(lib + '\\*.tif'):
+    
+            geo_list = []
+            with rasterio.open(pic) as dataset:
+    
+                # copy meta data for mask
+                meta = dataset.meta.copy()
+    
+                # Read the dataset's valid data mask as a ndarray.
+                mask = dataset.dataset_mask()
+    
+                # Extract feature shapes and values from the array.
+                for g, val in rasterio.features.shapes(
+                        mask, transform=dataset.transform):
+    
+                    # Transform shapes from the dataset's own coordinate
+                    geom = rasterio.warp.transform_geom(
+                        dataset.crs, dataset.crs, g, precision=6)
+    
+                    geo_list.append(geom)
+            l = []
+            for k in range(len(geo_list)):
+                l.append(shape(geo_list[k]))
+    
+            df = pd.DataFrame(l)
+            raster_outline = gpd.GeoDataFrame(geometry=df[0], crs=dataset.crs)
+    
+            ### only consider ground truths included in current patch to save time
+            intersection = gpd.overlay(truths, raster_outline, how='intersection')
+    
+    
+            if intersection.empty == False and len(l) == 1:
+                os.remove(pic)
+        
+            count += 1
+        
+        print('Total removed: %s'%r)
+        print('%s files remaining'%(total_tiles-r))
+        
+        print('Re-numbering...')
+        count = 0
+        for pic in glob.glob(lib + '\\*.tif'):
+            os.rename(pic, lib + '\\n%s.tif'%count)
+            count += 1
+        count = 0
+        for pic in glob.glob(lib + '\\*.tif'):
+            os.rename(pic, lib + '\\%s.tif'%count)
+            count += 1
+        
+        return
+    
+
+
+
+    else: ### keep all good tiles
     
     print('\nFiltering bad tiles...')
     
@@ -67,7 +133,7 @@ def remove_imperfect(lib):
                 os.remove(pic)
                 r += 1                
                 
-    
+
         count += 1
     
     print('Total removed: %s'%r)
