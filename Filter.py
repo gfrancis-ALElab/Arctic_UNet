@@ -40,7 +40,8 @@ def remove(lib, overlap_only=False):
                        if os.path.isfile(lib + '\\' + name)])
     
     
-    if overlap_only: ### keep only overlap tiles
+    ### keep only overlap tiles
+    if overlap_only:
         
         truths = gpd.read_file(truths_path)
     
@@ -105,49 +106,49 @@ def remove(lib, overlap_only=False):
 
     else: ### keep all good tiles
     
-    print('\nFiltering bad tiles...')
-    
-    count = 0
-    r = 0
-    for pic in glob.glob(lib + '\\*.tif'):
+        print('\nFiltering bad tiles...')
         
-        # print('Filtering: %s / %s'%(count+1, total_tiles))
-    
-        geo_list = []
-        with rasterio.open(pic) as dataset:
-    
-            # Read the dataset's valid data mask as a ndarray.
-            mask = dataset.dataset_mask()
-            meta = dataset.meta.copy()
-    
-            ### Skip over tile if missing data (blank white areas)
-            if not data_check(mask):
-                dataset.close()
-                os.remove(pic)
-                r += 1
-                count += 1
-                continue
+        count = 0
+        r = 0
+        for pic in glob.glob(lib + '\\*.tif'):
             
-            if meta['height'] != meta['width']:
-                dataset.close()
-                os.remove(pic)
-                r += 1                
+            # print('Filtering: %s / %s'%(count+1, total_tiles))
+        
+            geo_list = []
+            with rasterio.open(pic) as dataset:
+        
+                # Read the dataset's valid data mask as a ndarray.
+                mask = dataset.dataset_mask()
+                meta = dataset.meta.copy()
+        
+                ### Skip over tile if missing data (blank white areas)
+                if not data_check(mask):
+                    dataset.close()
+                    os.remove(pic)
+                    r += 1
+                    count += 1
+                    continue
                 
-
-        count += 1
+                if meta['height'] != meta['width']:
+                    dataset.close()
+                    os.remove(pic)
+                    r += 1                
+                    
     
-    print('Total removed: %s'%r)
-    print('%s files remaining'%(total_tiles-r))
-    
-    print('Re-numbering...')
-    count = 0
-    for pic in glob.glob(lib + '\\*.tif'):
-        os.rename(pic, lib + '\\n%s.tif'%count)
-        count += 1
-    count = 0
-    for pic in glob.glob(lib + '\\*.tif'):
-        os.rename(pic, lib + '\\%s.tif'%count)
-        count += 1
+            count += 1
+        
+        print('Total removed: %s'%r)
+        print('%s files remaining'%(total_tiles-r))
+        
+        print('Re-numbering...')
+        count = 0
+        for pic in glob.glob(lib + '\\*.tif'):
+            os.rename(pic, lib + '\\n%s.tif'%count)
+            count += 1
+        count = 0
+        for pic in glob.glob(lib + '\\*.tif'):
+            os.rename(pic, lib + '\\%s.tif'%count)
+            count += 1
     
     return
 
