@@ -51,7 +51,7 @@ def create_library(img, truths, lib_dir, w, Ovr, f, aug):
     
     
     ### Remove bad tiles from library (usually edge tiles) & Re-number
-    Filter.remove_imperfect(pics_dir)
+    Filter.remove(pics_dir)
     
     
     
