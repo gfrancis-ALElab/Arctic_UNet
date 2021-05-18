@@ -29,7 +29,7 @@ import Predict_Workflow
 
 ### Name for Sequence
 ### (area abr. & date YYYYMMDD)
-Train_AOI = 'WR20200818_60000'
+Train_AOI = 'Banks_40000'
 Predict_AOI = Train_AOI
 
 
@@ -38,13 +38,13 @@ Predict_AOI = Train_AOI
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-img_dir = home + r'\Documents\Planet\WR\data'
-img = home + r'\Documents\Planet\WR\data\20200818_mosaic_NIR_G_R.tif'
-truths = home + r'\Documents\Planet\WR\data\ground_truths\Willow_River_Thaw_Slumps_poly.shp'
+img_dir = home + r'\Documents\Planet\Banks\Data\NIR_G_R_mosaics'
+img = img_dir + '\\' + 'Banks_Island_mosaic_NIR_G_R.tif'
+truths = home + r'\Documents\Planet\Banks\Data\ground_truths\Banks_Island_slumps.shp'
 
 
 ### Training Library OUTPUT DIRECTORY
-lib_dir = home + r'\Documents\Planet\WR\Training_Library_' + Train_AOI
+lib_dir = home + r'\Documents\Planet\Banks\Training_Library_' + Train_AOI
 
 ### PARAMETERS:
 ###    For: Split
@@ -53,7 +53,7 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 60000 ### number of augmented images to include in library
+aug = 40000 ### number of augmented images to include in library
 ##############################################################################
 Build_Library.create_library(img, truths, lib_dir, w, Ovr, f, aug)
 
@@ -88,10 +88,7 @@ UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
 
 ###             Deploy Trained Model & Prediction Map Settings
 ##############################################################################
-### INPUT DIRECTORY: Images for predition (folder containing .GEOTIFF(s)...)
-img_dir = r''
-
-### OUTPUT DIRECTORY (save location)
+### OUTPUT DIRECTORY (single map save location)
 out_dir = lib_dir + r'\Prediction_Map_%s_%s'%(Predict_AOI,name)
 
 ### SAVED MODEL NAME & DIRECTORY
@@ -105,7 +102,11 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = True
+timeline = False
+
+### Reset Directories if timeline set to True
+# img_dir = r''
+# out_dir = lib_dir + r'\Timeline_out_%s_%s'%(Predict_AOI,name)
 ##############################################################################
 Predict_Workflow.do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline)
 
