@@ -12,6 +12,7 @@ email: gfrancis@uvic.ca
 """
 
 import os
+import glob
 import Split
 import Filter
 import Convert

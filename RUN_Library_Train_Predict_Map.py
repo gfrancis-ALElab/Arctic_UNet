@@ -105,7 +105,7 @@ timeline = False
 
 ### Reset Directories if timeline set to True
 # img_dir = r''
-# out_dir = lib_dir + r'\Timeline_out_%s_%s'%(Predict_AOI,name)
+# out_dir = lib_dir + r'\Timeline_output'
 ##############################################################################
 Predict_Workflow.do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline)
 
