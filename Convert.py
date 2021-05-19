@@ -26,7 +26,7 @@ def to_jpg(lib):
                    if os.path.isfile(lib + '\\' + name)])
     
     
-    print('Making .jpg copies...')
+    print('Making .JPG copies for model input...')
     for i in range(total_tiles):
         
         Gtif = lib + '\\%s.tif'%i
