@@ -42,7 +42,7 @@ def process(path_t, path_p, path_AOI):
     aoi['area'] = aoi['geometry'].area
     aoi_spec = aoi.loc[aoi['area']==aoi['area'].max()]
     
-    print('\nCascading truths...')
+    print('\nCascading truths for analysis...')
     truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
     truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
     
@@ -82,11 +82,15 @@ name = 'Banks_training_eval_40000'
 truths = r'C:\Users\gfrancis\Documents\Planet\Banks\data\ground_truths\Banks_Island_slumps.shp'
 predicted = r'C:\Users\gfrancis\Documents\Planet\Banks\Training_Library_Banks_40000\Prediction_Map_Banks_40000_UNet_100x100_Ovr0_rmsprop_21b_20e_40000a_Banks_40000\Banks_Island_mosaic_NIR_G_R\map\cascaded_map.shp'
 AOI = r'C:\Users\gfrancis\Documents\Planet\Banks\Training_Library_Banks_40000\AOI\Banks_Island_mosaic_NIR_G_R_AOI.shp'
+
+### OUTPUT DIRECTORY
+HOME = os.path.expanduser('~')
+RESULTS_DIR = r'\Documents\Planet\Banks\Training_Library_Banks_40000\Performance_Results_%s' % (name)
+path = HOME+RESULTS_DIR
 ##############################################################################
 
-HOME = os.path.expanduser('~')
-RESULTS_DIR = r'\Documents\Planet\Banks\Performance_Results_%s' % (name)
-path = HOME+RESULTS_DIR
+
+
 
 
 if os.path.isdir(path) is False:

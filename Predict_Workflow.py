@@ -18,7 +18,7 @@ import Filter
 import Convert
 import UNet_Predict
 import Map
-# import Timeline
+import Timeline
 
 
 
@@ -65,7 +65,7 @@ def do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline):
     
         
         ### Remove bad tiles from library (edge tiles) & Re-number
-        Filter.remove(tiles_dir, overlap_only=timeline)
+        Filter.remove(tiles_dir, truths, overlap_only=timeline)
         
         
         ### convert to .JPEG
@@ -80,10 +80,8 @@ def do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline):
         Map.build_map(tiles_dir, pred_dir, map_dir)
     
     
-    # if timeline:
-    #     Timeline.time_machine(truths, prediction_map_dirs, AOI)
-    
-    
+    if timeline:
+        Timeline.time_machine(truths, map_dir, AOI, out_dir, name)
     
     
     return

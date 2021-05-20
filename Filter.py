@@ -34,7 +34,13 @@ def data_check(M):
     return ((len(np.unique(M)) == 1) and (np.unique(M)[0] != 0))
 
 
-def remove(lib, overlap_only=False):
+def get_name(file_location):
+    filename = file_location.split('\\')[-1]
+    filename = filename.split('.')
+    return filename[0]
+
+
+def remove(lib, truths_path, overlap_only=False):
     
     total_tiles = len([name for name in os.listdir(lib)
                        if os.path.isfile(lib + '\\' + name)])
@@ -81,8 +87,13 @@ def remove(lib, overlap_only=False):
             intersection = gpd.overlay(truths, raster_outline, how='intersection')
     
     
-            if intersection.empty == False and len(l) == 1:
+            if intersection.empty == True:
+                # print('Removing: %s'%pic)
                 os.remove(pic)
+                r += 1
+            else:
+                fn = get_name(pic)
+                print('Ground Truth Overlap at: %s'%fn)
         
             count += 1
         
