@@ -42,7 +42,6 @@ def process(path_t, path_p, path_AOI):
     aoi['area'] = aoi['geometry'].area
     aoi_spec = aoi.loc[aoi['area']==aoi['area'].max()]
     
-    
     print('\nCascading truths...')
     truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
     truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
@@ -52,7 +51,6 @@ def process(path_t, path_p, path_AOI):
     # predicted = gpd.GeoSeries(cascaded_union(predicted['geometry']))
     # predicted = gpd.GeoDataFrame(geometry=predicted, crs=crs)
     
-
     assert truths.crs == predicted.crs
     assert aoi_spec.crs == truths.crs
     assert aoi_spec.crs == predicted.crs
@@ -61,7 +59,7 @@ def process(path_t, path_p, path_AOI):
     # print('Clipping truths to AOI')
     # truths = gpd.clip(truths, aoi)
     
-    print('Calculating areas for:\nBetween Truths...')
+    print('Calculating areas for:\n...Between Truths...')
     between_t = gpd.overlay(aoi_spec, truths, how='difference')
     
     print('...True Positives...')
@@ -79,15 +77,15 @@ def process(path_t, path_p, path_AOI):
 
 
 ##############################################################################
-name = 'WR_training_eval_60000'
+name = 'Banks_training_eval_40000'
 ### INPUT DIRECTORIES
-truths = r'C:\Users\gfrancis\Documents\Planet\WR\training_data\ground_truths\Willow_River_Thaw_Slumps_poly.shp'
-predicted = r'C:\Users\gfrancis\Documents\Planet\WR\Training_Library_WR20200818_60000\Prediction_Map_WR20200818_60000_UNet_100x100_Ovr0_rmsprop_21b_20e_60000a_WR20200818_60000\map\cascaded_map.shp'
-AOI = r'C:\Users\gfrancis\Documents\Planet\WR\20200818_mosaic_NIR_G_R_AOI.shp'
+truths = r'C:\Users\gfrancis\Documents\Planet\Banks\data\ground_truths\Banks_Island_slumps.shp'
+predicted = r'C:\Users\gfrancis\Documents\Planet\Banks\Training_Library_Banks_40000\Prediction_Map_Banks_40000_UNet_100x100_Ovr0_rmsprop_21b_20e_40000a_Banks_40000\Banks_Island_mosaic_NIR_G_R\map\cascaded_map.shp'
+AOI = r'C:\Users\gfrancis\Documents\Planet\Banks\Training_Library_Banks_40000\AOI\Banks_Island_mosaic_NIR_G_R_AOI.shp'
 ##############################################################################
 
 HOME = os.path.expanduser('~')
-RESULTS_DIR = r'\Documents\Planet\WR\Performance_Results_%s' % (name)
+RESULTS_DIR = r'\Documents\Planet\Banks\Performance_Results_%s' % (name)
 path = HOME+RESULTS_DIR
 
 

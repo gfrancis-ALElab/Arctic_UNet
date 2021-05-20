@@ -81,7 +81,7 @@ def do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline):
     
     
     # if timeline:
-    #     Timeline.time_machine(...)
+    #     Timeline.time_machine(truths, prediction_map_dirs, AOI)
     
     
     
