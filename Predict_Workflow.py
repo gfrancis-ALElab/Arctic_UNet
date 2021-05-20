@@ -18,7 +18,7 @@ import Filter
 import Convert
 import UNet_Predict
 import Map
-import Timeline
+import Metrics
 
 
 
@@ -78,10 +78,11 @@ def do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline):
         
         ### create map from prediction tiles
         Map.build_map(tiles_dir, pred_dir, map_dir)
+        
+        
+        ### calculate performance metrics (and save True Posities for timeline)
+        Metrics.run_metrics(path_t, path_p, path_AOI, save_path, name)
     
-    
-    if timeline:
-        Timeline.time_machine(truths, map_dir, AOI, out_dir, name)
     
     
     return
