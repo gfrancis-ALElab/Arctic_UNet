@@ -38,13 +38,13 @@ Train_name = 'Banks_60000'
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
 main_folder = home + r'\Documents\Planet\Banks'
-img_dir = main_folder + '\Data\NIR_G_R_mosaics'
-img = img_dir + '\\' + 'Banks_Island_mosaic_NIR_G_R.tif'
-path_t = main_folder + '\Data\ground_truths\Banks_Island_slumps.shp'
+img_dir = main_folder + r'\Data\NIR_G_R_mosaics'
+img = img_dir + '\\' + r'Banks_Island_mosaic_NIR_G_R.tif'
+path_t = main_folder + r'\Data\ground_truths\Banks_Island_slumps.shp'
 
 
 ### Training Library OUTPUT DIRECTORY
-lib_dir = main_folder + '\Training_Library_' + Train_name
+lib_dir = main_folder + r'\Training_Library_' + Train_name
 
 ### PARAMETERS:
 ###    For: Split

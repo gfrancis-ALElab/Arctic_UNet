@@ -39,19 +39,24 @@ def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
     
     
     ### Split mosic into tiles
-    # Split.split_image(input = img,
-    #                         output_dir = pics_dir,
-    #                         patch_w = w,
-    #                         patch_h = w,
-    #                         adj_overlay_x = Ovr,
-    #                         adj_overlay_y = Ovr,
-    #                         out_format = f
-    #                         )
+    Split.split_image(input = img,
+                            output_dir = pics_dir,
+                            patch_w = w,
+                            patch_h = w,
+                            adj_overlay_x = Ovr,
+                            adj_overlay_y = Ovr,
+                            out_format = f
+                            )
     
     
+    truths = gpd.read_file(path_t)
+    crs = truths.crs
+    print('\nCascading truths for analysis...')
+    truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
+    truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
     
     ### Remove bad tiles from library (usually edge tiles) & Re-number
-    # Filter.remove(pics_dir, path_t)
+    Filter.remove(pics_dir, truths)
     
     
     

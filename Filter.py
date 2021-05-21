@@ -40,7 +40,7 @@ def get_name(file_location):
     return filename[0]
 
 
-def remove(lib, truths_path, overlap_only=True):
+def remove(lib, truths, overlap_only=True):
     
     total_tiles = len([name for name in os.listdir(lib)
                        if os.path.isfile(lib + '\\' + name)])
@@ -48,9 +48,6 @@ def remove(lib, truths_path, overlap_only=True):
     
     ### keep only overlap tiles
     if overlap_only:
-        
-        truths = gpd.read_file(truths_path)
-    
     
         print('\nFiltering non-overlapping tiles...')
         
