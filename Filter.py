@@ -40,7 +40,7 @@ def get_name(file_location):
     return filename[0]
 
 
-def remove(lib, truths_path, overlap_only=False):
+def remove(lib, truths_path, overlap_only=True):
     
     total_tiles = len([name for name in os.listdir(lib)
                        if os.path.isfile(lib + '\\' + name)])

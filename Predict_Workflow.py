@@ -19,6 +19,10 @@ import Convert
 import UNet_Predict
 import Map
 import Metrics
+from shapely import speedups
+speedups.disable()
+from shapely.ops import cascaded_union
+import geopandas as gpd
 
 
 
@@ -32,13 +36,21 @@ def get_name(file_location):
 
 
 
-def do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline):
+def do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline):
 
     
+    truths = gpd.read_file(path_t)
+    crs = truths.crs
+    print('\nCascading truths for analysis...')
+    truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
+    truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
+
+
+
     for pic in glob.glob(img_dir + '\\*.tif'):
         
-        name = get_name(pic)
-        out_dir = out_dir + '\\' + name
+        fn = get_name(pic)
+        out_dir = out_dir + '\\' + fn
 
         ### Build subfolders
         if os.path.isdir(out_dir) is False:
@@ -47,9 +59,11 @@ def do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline):
             os.makedirs(out_dir + '\\tiles')
             os.makedirs(out_dir + '\\predictions')
             os.makedirs(out_dir + '\\map')
+            os.makedirs(out_dir + '\\metrics')
         tiles_dir = out_dir + '\\tiles'
         pred_dir = out_dir + '\\predictions'
         map_dir = out_dir + '\\map'
+        met_dir = out_dir + '\\metrics'
         
         
         ### Split mosic into tiles
@@ -64,8 +78,8 @@ def do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline):
                         )
     
         
-        ### Remove bad tiles from library (edge tiles) & Re-number
-        Filter.remove(tiles_dir, truths, overlap_only=timeline)
+        ### Remove tiles that don't intersect ground truths & Re-number
+        Filter.remove(tiles_dir, truths, overlap_only=True)
         
         
         ### convert to .JPEG
@@ -81,7 +95,7 @@ def do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline):
         
         
         ### calculate performance metrics (and save True Posities for timeline)
-        Metrics.run_metrics(path_t, path_p, path_AOI, save_path, name)
+        Metrics.run_metrics(truths, map_dir, pic, fn, met_dir, timeline)
     
     
     

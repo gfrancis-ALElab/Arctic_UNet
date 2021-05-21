@@ -9,7 +9,7 @@ Functions to create .shp map from predition masks using corresponding original t
 @author: Grant Francis
 email: gfrancis@uvic.ca
 """
-
+### TODO: make faster by combining shapes without saving every one first
 
 import os
 import numpy as np
@@ -66,8 +66,6 @@ def combine_shps(map_dir):
     print('Cascaded map saved as .SHP')
     
     return
-
-
 
 
 

@@ -39,7 +39,7 @@ Train_name = 'Banks_40000'
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
 img_dir = home + r'\Documents\Planet\Banks\Data\NIR_G_R_mosaics'
 img = img_dir + '\\' + 'Banks_Island_mosaic_NIR_G_R.tif'
-truths = home + r'\Documents\Planet\Banks\Data\ground_truths\Banks_Island_slumps.shp'
+path_t = home + r'\Documents\Planet\Banks\Data\ground_truths\Banks_Island_slumps.shp'
 
 
 ### Training Library OUTPUT DIRECTORY
@@ -54,7 +54,7 @@ f = 'GTIFF' ### output format
 ###    For: Augmentation
 aug = 40000 ### number of augmented images to include in library
 ##############################################################################
-# Build_Library.create_library(img, truths, lib_dir, w, Ovr, f, aug)
+# Build_Library.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -101,7 +101,7 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = True
+timeline = True ### set to false for full metrics output
 
 ### Reset Directories if making timeline
 if timeline:
@@ -109,7 +109,7 @@ if timeline:
     lib_dir = home + r'\Documents\Planet\Banks'
     out_dir = lib_dir + r'\Timeline_output'
 ##############################################################################
-Predict_Workflow.do_your_thang(img_dir, out_dir, truths, saved_model, w, Ovr, f, timeline)
+Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
 
 

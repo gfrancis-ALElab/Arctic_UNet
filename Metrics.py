@@ -18,22 +18,22 @@ import geopandas as gpd
 import numpy as np
 from shapely import speedups
 speedups.disable()
-from shapely.ops import cascaded_union
+import AOI
 
 
 
-##############################################################################
-name = 'Banks_training_eval_40000'
-### INPUT DIRECTORIES
-truths = r'C:\Users\gfrancis\Documents\Planet\Banks\data\ground_truths\Banks_Island_slumps.shp'
-predicted = r'C:\Users\gfrancis\Documents\Planet\Banks\Training_Library_Banks_40000\Prediction_Map_Banks_40000_UNet_100x100_Ovr0_rmsprop_21b_20e_40000a_Banks_40000\Banks_Island_mosaic_NIR_G_R\map\cascaded_map.shp'
-AOI = r'C:\Users\gfrancis\Documents\Planet\Banks\Training_Library_Banks_40000\AOI\Banks_Island_mosaic_NIR_G_R_AOI.shp'
+# ##############################################################################
+# name = 'Banks_training_eval_40000'
+# ### INPUT DIRECTORIES
+# truths = r'C:\Users\gfrancis\Documents\Planet\Banks\data\ground_truths\Banks_Island_slumps.shp'
+# predicted = r'C:\Users\gfrancis\Documents\Planet\Banks\Training_Library_Banks_40000\Prediction_Map_Banks_40000_UNet_100x100_Ovr0_rmsprop_21b_20e_40000a_Banks_40000\Banks_Island_mosaic_NIR_G_R\map\cascaded_map.shp'
+# AOI = r'C:\Users\gfrancis\Documents\Planet\Banks\Training_Library_Banks_40000\AOI\Banks_Island_mosaic_NIR_G_R_AOI.shp'
 
-### OUTPUT DIRECTORY
-HOME = os.path.expanduser('~')
-RESULTS_DIR = r'\Documents\Planet\Banks\Training_Library_Banks_40000\Performance_Results_%s' % (name)
-save_path = HOME+RESULTS_DIR
-##############################################################################
+# ### OUTPUT DIRECTORY
+# HOME = os.path.expanduser('~')
+# RESULTS_DIR = r'\Documents\Planet\Banks\Training_Library_Banks_40000\Performance_Results_%s' % (name)
+# save_path = HOME+RESULTS_DIR
+# ##############################################################################
 
 
 
@@ -48,13 +48,7 @@ def area(df):
 #     return area(I)/area(U)
 
 
-def get_name(file_location):
-    filename = file_location.split('\\')[-1]
-    filename = filename.split('.')
-    return filename[0]
-
-
-def process(truths, predicted, AOI):
+def process(truths, predicted, aoi, timeline=False):
 
     crs = truths.crs
     
@@ -63,78 +57,66 @@ def process(truths, predicted, AOI):
     # truths = gpd.clip(truths, aoi)
     
     print('Calculating areas for:\n...Between Truths...')
-    between_t = gpd.overlay(AOI, truths, how='difference')
+    between_t = gpd.overlay(aoi, truths, how='difference')
     
     print('...True Positives...')
     TP = gpd.overlay(predicted, between_t, how='difference')
-    print('...False Positives...')
-    FP = gpd.overlay(predicted, truths, how='difference')
-    print('...False Negatives...')
-    FN = gpd.overlay(truths, predicted, how='difference')
-
-    prec = area(TP)/(area(TP)+area(FP))
-    rec = area(TP)/(area(TP)+area(FN))
-    f1 = (2*prec*rec)/(prec+rec)
-
-    return TP, FP, FN, prec, rec, f1, truths, between_t, predicted, AOI
-
-
-
-
-def run_metrics(path_t, path_p, path_AOI, save_path, name):
-
-    if os.path.isdir(path) is False:
-        os.mkdir(path)
-        print ('\nSuccessfully created save directory: \'%s\'' % path)
-        SAVE_DIR = path+'\\'
     
-    else:
-        print('\nDirectory: \'%s\' already exists.' % path)
-        input('Continue?')
-        SAVE_DIR = path+'\\'
-        
-    truths = gpd.read_file(path_t)
-    print('\nCascading truths for analysis...')
-    truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
-    truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
+    if timeline:
+        return TP, between_t, None, None, None, None, None
     
-    aoi = gpd.read_file(path_AOI)
+    if not timeline:
+        print('...False Positives...')
+        FP = gpd.overlay(predicted, truths, how='difference')
+        print('...False Negatives...')
+        FN = gpd.overlay(truths, predicted, how='difference')
+    
+        prec = area(TP)/(area(TP)+area(FP))
+        rec = area(TP)/(area(TP)+area(FN))
+        f1 = (2*prec*rec)/(prec+rec)
+
+        return TP, between_t, FP, FN, prec, rec, f1
+
+
+
+
+def run_metrics(truths, map_dir, pic, fn, save_path, timeline):
+
+    crs = truths.crs
+    
+    aoi = AOI.get_bounds(pic)
     aoi = aoi.to_crs(crs)
     aoi['area'] = aoi['geometry'].area
     aoi_spec = aoi.loc[aoi['area']==aoi['area'].max()] ### TODO: improve with aoi bounds to remove any possible holes
     
+    predicted = gpd.read_file(map_dir + '\\cascaded_map.shp')
     assert truths.crs == predicted.crs
-    assert aoi_spec.crs == truths.crs
-    assert aoi_spec.crs == predicted.crs
-    
-    ### TODO: loop over all predition maps
-    # for pred_map in glob.glob(path_p + '\\cascaded_map.shp'):
-    #   fn = get_name(pred_map)
-    #   predicted = gpd.read_file(path_p)
-    
-    ### include this in loop ...
-    TP, FP, FN, Precision, Recall, F1, tru, betw, pred, aoi = process(truths, predicted, aoi_spec)
-    
-    print('\nPrecision: %s' % (Precision))
-    print('Recall: %s' % (Recall))
-    print('F1: %s' % (F1))
+
+
+    TP, betw, FP, FN, Precision, Recall, F1 = process(truths, predicted, aoi_spec, timeline)
     
     
-    with open(SAVE_DIR+'results_%s.txt' % (name), 'w') as file:
-        file.write('Precision: %s\nRecall: %s\nF1: %s' % (Precision, Recall, F1))
+    TP.to_file(save_path+'\\%s_TP.shp' % fn)
+    
+    if not timeline:
+        print('\nPrecision: %s' % (Precision))
+        print('Recall: %s' % (Recall))
+        print('F1: %s' % (F1))
     
     
-    TP.to_file(SAVE_DIR+'%s_TP.shp' % name)
-    FP.to_file(SAVE_DIR+'%s_FP.shp' % name)
-    FN.to_file(SAVE_DIR+'%s_FN.shp' % name)
-    tru.to_file(SAVE_DIR+'%s_truths.shp' % name)
-    betw.to_file(SAVE_DIR+'%s_between.shp' % name)
-    pred.to_file(SAVE_DIR+'%s_predictions.shp' % name)
-    aoi.to_file(SAVE_DIR+'%s_AOI.shp' % name)
+        with open(save_path+'\\metrics_%s.txt' % (fn), 'w') as file:
+            file.write('Precision: %s\nRecall: %s\nF1: %s' % (Precision, Recall, F1))
     
-    print('Results saved.')
+
+        FP.to_file(save_path+'\\%s_FP.shp' % fn)
+        FN.to_file(save_path+'\\%s_FN.shp' % fn)
+        truths.to_file(save_path+'\\%s_truths.shp' % fn)
+        betw.to_file(save_path+'\\%s_between.shp' % fn)
+        predicted.to_file(save_path+'\\%s_predictions.shp' % fn)
+        aoi_spec.to_file(save_path+'\\%s_AOI.shp' % fn)
     
-    ### ...
+    print('\nMetrics saved for %s.'%fn)
+    
 
     return
 
