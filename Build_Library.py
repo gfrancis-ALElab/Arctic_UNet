@@ -24,7 +24,7 @@ import Augment
 ##############################################################################
 
 
-def create_library(img, truths, lib_dir, w, Ovr, f, aug):
+def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
 
 
     ### Build subfolders
@@ -51,7 +51,7 @@ def create_library(img, truths, lib_dir, w, Ovr, f, aug):
     
     
     ### Remove bad tiles from library (usually edge tiles) & Re-number
-    Filter.remove(pics_dir)
+    Filter.remove(pics_dir, path_t)
     
     
     

@@ -29,7 +29,7 @@ import Predict_Workflow
 
 ### Name for training sequence
 ### (area abr. & date YYYYMMDD)
-Train_name = 'Banks_40000'
+Train_name = 'Banks_60000'
 
 
 
@@ -52,7 +52,7 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 40000 ### number of augmented images to include in library
+aug = 60000 ### number of augmented images to include in library
 ##############################################################################
 Build_Library.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
