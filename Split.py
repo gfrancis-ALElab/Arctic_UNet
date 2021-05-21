@@ -48,14 +48,14 @@ def sliding_window(image_width,image_height,
         count_y = count_y + 1
 
     # output split information
-    # f_obj = open('split_image_info.txt','w')
-    # f_obj.writelines('### This file is created by split_image.py. mosaic_patches.py need it. Do not edit it\n')
-    # f_obj.writelines('image_width:%d\n' % image_width)
-    # f_obj.writelines('image_height:%d\n' % image_height)
-    # f_obj.writelines('expected patch_w:%d\n' % patch_w)
-    # f_obj.writelines('expected patch_h:%d\n'%patch_h)
-    # f_obj.writelines('adj_overlay_x:%d\n' % adj_overlay_x)
-    # f_obj.writelines('adj_overlay_y:%d\n' % adj_overlay_y)
+    f_obj = open('split_image_info.txt','w')
+    f_obj.writelines('### This file is created by split_image.py. mosaic_patches.py need it. Do not edit it\n')
+    f_obj.writelines('image_width:%d\n' % image_width)
+    f_obj.writelines('image_height:%d\n' % image_height)
+    f_obj.writelines('expected patch_w:%d\n' % patch_w)
+    f_obj.writelines('expected patch_h:%d\n'%patch_h)
+    f_obj.writelines('adj_overlay_x:%d\n' % adj_overlay_x)
+    f_obj.writelines('adj_overlay_y:%d\n' % adj_overlay_y)
 
     patch_boundary = []
     for i in range(0,count_x):
