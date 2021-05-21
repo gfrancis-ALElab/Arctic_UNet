@@ -54,7 +54,7 @@ f = 'GTIFF' ### output format
 ###    For: Augmentation
 aug = 40000 ### number of augmented images to include in library
 ##############################################################################
-# Build_Library.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+Build_Library.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -77,7 +77,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 callback_dir = lib_dir + '\\' + name
 save_dir = lib_dir + r'\saved_models'
 ##############################################################################
-# UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
+UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -101,7 +101,7 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = True ### set to false for full metrics output
+timeline = False ### set to false for full metrics output
 
 ### Reset Directories if making timeline
 if timeline:
