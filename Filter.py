@@ -93,7 +93,7 @@ def remove(lib, truths_path, overlap_only=True):
                 r += 1
             else:
                 fn = get_name(pic)
-                print('Ground Truth Overlap at: %s'%fn)
+                # print('Ground Truth Overlap at: %s'%fn)
         
             count += 1
         
