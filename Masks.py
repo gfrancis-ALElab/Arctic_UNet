@@ -34,7 +34,7 @@ def create_masks(truths_path, lib_dir, pics_dir, masks_dir, img):
     total_tiles = len([name for name in os.listdir(pics_dir)
                    if os.path.isfile(pics_dir + '\\' + name)])
 
-    print('\nLooking for ground truth overlap....')
+    print('\nCreating masks....')
 
     c_mask = 0
     c_skip = 0
@@ -77,7 +77,7 @@ def create_masks(truths_path, lib_dir, pics_dir, masks_dir, img):
         if intersection.empty == False and len(l) == 1:
 
             c_mask += 1
-            print('Creating mask for tile: %s / %s    Total: %s'%(str(i+1),total_tiles,c_mask))
+            # print('Creating mask for tile: %s / %s    Total: %s'%(str(i+1),total_tiles,c_mask))
 
             joined_tiles = joined_tiles.geometry.append(raster_outline.geometry)
 
