@@ -37,13 +37,14 @@ Train_name = 'Banks_60000'
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-img_dir = home + r'\Documents\Planet\Banks\Data\NIR_G_R_mosaics'
+main_folder = home + r'\Documents\Planet\Banks'
+img_dir = main_folder + '\Data\NIR_G_R_mosaics'
 img = img_dir + '\\' + 'Banks_Island_mosaic_NIR_G_R.tif'
-path_t = home + r'\Documents\Planet\Banks\Data\ground_truths\Banks_Island_slumps.shp'
+path_t = main_folder + '\Data\ground_truths\Banks_Island_slumps.shp'
 
 
 ### Training Library OUTPUT DIRECTORY
-lib_dir = home + r'\Documents\Planet\Banks\Training_Library_' + Train_name
+lib_dir = main_folder + '\Training_Library_' + Train_name
 
 ### PARAMETERS:
 ###    For: Split
@@ -75,7 +76,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 
 ### DIRECTORIES FOR MODEL TRAINING HISTORY
 callback_dir = lib_dir + '\\' + name
-save_dir = lib_dir + r'\saved_models'
+save_dir = main_folder + r'\saved_models'
 ##############################################################################
 UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
 
@@ -106,8 +107,7 @@ timeline = False ### set to false for full metrics output
 ### Reset Directories if making timeline
 if timeline:
     img_dir = r'C:\Users\gfrancis\Documents\Planet\Banks\Data\NIR_G_R_mosaics'
-    lib_dir = home + r'\Documents\Planet\Banks'
-    out_dir = lib_dir + r'\Timeline_output'
+    out_dir = main_folder + r'\Timeline_output'
 ##############################################################################
 Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
