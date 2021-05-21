@@ -29,7 +29,7 @@ import Predict_Workflow
 
 ### Name for training sequence
 ### (area abr. & date YYYYMMDD)
-Train_name = 'Banks_60000'
+Train_name = 'Banks_70000_80e'
 
 
 
@@ -53,7 +53,7 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 60000 ### number of augmented images to include in library
+aug = 70000 ### number of augmented images to include in library
 ##############################################################################
 Build_Library.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
@@ -69,7 +69,7 @@ Build_Library.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 ###    For: Training
 c = 2 ### number of classes
 b = 21 ### batch size
-e = 20 ### epochs
+e = 80 ### epochs
 
 ### NAME FOR RUN:   (format as: model_dim_opt_batch_epochs_#augs_areaYYMMDD)
 name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
