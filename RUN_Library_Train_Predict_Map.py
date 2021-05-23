@@ -69,7 +69,7 @@ Build_Library.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 ###    For: Training
 c = 2 ### number of classes
 b = 21 ### batch size
-e = 80 ### epochs
+e = 65 ### epochs
 
 ### NAME FOR RUN:   (format as: model_dim_opt_batch_epochs_#augs_areaYYMMDD)
 name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
