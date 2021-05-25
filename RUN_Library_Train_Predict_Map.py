@@ -20,7 +20,7 @@ os.chdir(home + r'\documents\code\arctic_unet') ### directory with code
 os.environ['PROJ_LIB'] = home + r'\Appdata\Roaming\Python\Python37\site-packages\osgeo\data\proj'
 os.environ['GDAL_DATA'] = home + r'\Appdata\Roaming\Python\Python37\site-packages\osgeo\data'
 
-import Build_Library
+import Build_Library_Workflow
 import UNet_Train
 import Predict_Workflow
 
@@ -55,7 +55,7 @@ f = 'GTIFF' ### output format
 ###    For: Augmentation
 aug = 70000 ### number of augmented images to include in library
 ##############################################################################
-Build_Library.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+Build_Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
