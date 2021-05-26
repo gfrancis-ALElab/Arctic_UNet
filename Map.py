@@ -54,16 +54,21 @@ def combine_shps(map_dir):
         S = gpd.read_file(input_shp_paths[i])
         joined_shps = joined_shps.geometry.append(S.geometry)
     
-    joined_shps.to_file(map_dir + '\\prediction_map.shp')
-    print('Prediction map saved as .SHP')
     
-    print('\nCascading predictions...')
-    Map = gpd.read_file(map_dir + '\\prediction_map.shp')
-    crs = Map.crs
-    Map = gpd.GeoSeries(cascaded_union(Map['geometry']))
-    Map = gpd.GeoDataFrame(geometry=Map, crs=crs)
-    Map.to_file(map_dir + '\\cascaded_map.shp')
-    print('Cascaded map saved as .SHP')
+    if joined_shps.empty == False:
+        joined_shps.to_file(map_dir + '\\prediction_map.shp')
+        print('Prediction map saved as .SHP')
+        
+        print('\nCascading predictions...')
+        Map = gpd.read_file(map_dir + '\\prediction_map.shp')
+        crs = Map.crs
+        Map = gpd.GeoSeries(cascaded_union(Map['geometry']))
+        Map = gpd.GeoDataFrame(geometry=Map, crs=crs)
+        Map.to_file(map_dir + '\\cascaded_map.shp')
+        print('Cascaded map saved as .SHP')
+        
+    else:
+        print('** No prediction shapes were found **')
     
     return
 
