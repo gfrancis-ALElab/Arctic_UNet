@@ -25,6 +25,7 @@ speedups.disable()
 from shapely.ops import cascaded_union
 import geopandas as gpd
 
+from contextlib import contextmanager
 
 
 
@@ -36,7 +37,7 @@ def get_name(file_location):
 
 
 
-
+@contextmanager
 def suppress_stdout():
     with open(os.devnull, "w") as devnull:
         old_stdout = sys.stdout
@@ -82,16 +83,16 @@ def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
         
         ### Split mosic into tiles
         print('Splitting image: %s...'%fn)
-        with suppress_stdout(): ### suppress the long output
-            Split.split_image(
-                            input = pic,
-                            output_dir = tiles_dir,
-                            patch_w = w,
-                            patch_h = w,
-                            adj_overlay_x = Ovr,
-                            adj_overlay_y = Ovr,
-                            out_format = f
-                            )
+        # with suppress_stdout(): ### suppress the long output
+        Split.split_image(
+                        input = pic,
+                        output_dir = tiles_dir,
+                        patch_w = w,
+                        patch_h = w,
+                        adj_overlay_x = Ovr,
+                        adj_overlay_y = Ovr,
+                        out_format = f
+                        )
     
         
         ### Remove tiles that don't intersect ground truths & Re-number

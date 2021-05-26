@@ -105,7 +105,7 @@ def split_image(input,output_dir,patch_w=1024,patch_h=1024,adj_overlay_x=0,adj_o
         print("Error: %s Folder not exist" % input)
         return False
 
-    Size_str = os.popen('gdalinfo '+input + ' |grep Size').readlines()
+    Size_str = os.popen('gdalinfo ' + input + ' |grep Size').readlines()
     temp = Size_str[0].split()
     img_witdh = int(temp[2][0:len(temp[2])-1])
     img_height = int(temp[3])
