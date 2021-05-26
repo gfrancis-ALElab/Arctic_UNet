@@ -68,7 +68,7 @@ def combine_shps(map_dir):
         print('Cascaded map saved as .SHP')
         
     else:
-        print('** No prediction shapes were found **')
+        print('** No prediction shapes were found **\nMoving on to next image\n\n\n\n')
         return False
     
     return
