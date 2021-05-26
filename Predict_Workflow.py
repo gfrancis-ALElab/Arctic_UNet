@@ -12,6 +12,7 @@ email: gfrancis@uvic.ca
 """
 
 import os
+import sys
 import glob
 import Split
 import Filter
@@ -32,6 +33,18 @@ def get_name(file_location):
     filename = file_location.split('\\')[-1]
     filename = filename.split('.')
     return filename[0]
+
+
+
+
+def suppress_stdout():
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:  
+            yield
+        finally:
+            sys.stdout = old_stdout
 
 
 
@@ -68,15 +81,17 @@ def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
         
         
         ### Split mosic into tiles
-        Split.split_image(
-                        input = pic,
-                        output_dir = tiles_dir,
-                        patch_w = w,
-                        patch_h = w,
-                        adj_overlay_x = Ovr,
-                        adj_overlay_y = Ovr,
-                        out_format = f
-                        )
+        print('Splitting image: %s...'%fn)
+        with suppress_stdout(): ### suppress the long output
+            Split.split_image(
+                            input = pic,
+                            output_dir = tiles_dir,
+                            patch_w = w,
+                            patch_h = w,
+                            adj_overlay_x = Ovr,
+                            adj_overlay_y = Ovr,
+                            out_format = f
+                            )
     
         
         ### Remove tiles that don't intersect ground truths & Re-number
