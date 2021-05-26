@@ -9,7 +9,7 @@ add time: 15 July, 2017
 """
 import sys,os,subprocess
 from optparse import OptionParser
-import datetime
+# import datetime
 
 def sliding_window(image_width,image_height,
                    patch_w,
@@ -137,7 +137,7 @@ def split_image(input,output_dir,patch_w=1024,patch_h=1024,adj_overlay_x=0,adj_o
             output_path = os.path.join(output_dir, pre_name + '_p_%d.tif' % index)
         else:
             raise ValueError("unknow output format:%s"%out_format)
-        args_list = ['gdal_translate','-of',out_format,'-srcwin',str(patch[0]),str(patch[1]),str(patch[2]),str(patch[3]),input,output_path]
+        args_list = ['gdal_translate','-of',out_format,'-srcwin',str(patch[0]),str(patch[1]),str(patch[2]),str(patch[3]),input,output_path,'-q']
         ps = subprocess.Popen(args_list)
         returncode = ps.wait()
         if os.path.isfile(output_path) is False:
