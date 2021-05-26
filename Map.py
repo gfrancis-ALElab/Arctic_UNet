@@ -69,6 +69,7 @@ def combine_shps(map_dir):
         
     else:
         print('** No prediction shapes were found **')
+        return False
     
     return
 
@@ -136,10 +137,10 @@ def build_map(tiles_dir, preds_dir, map_dir):
     
     
     print('\nBuilding Map...')
-    combine_shps(map_dir)
-    
-    return
-
+    if combine_shps(map_dir):
+        return
+    else:
+        return False
 
 
 

@@ -108,14 +108,14 @@ def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
         
         
         ### create map from prediction tiles
-        Map.build_map(tiles_dir, pred_dir, map_dir)
+        if Map.build_map(tiles_dir, pred_dir, map_dir):
         
         
-        ### calculate performance metrics (and save True Posities for timeline)
-        Metrics.run_metrics(truths, map_dir, pic, fn, met_dir, timeline)
+            ### calculate performance metrics (and save True Posities for timeline)
+            Metrics.run_metrics(truths, map_dir, pic, fn, met_dir, timeline)
     
     
-    
+
     return
 
 
