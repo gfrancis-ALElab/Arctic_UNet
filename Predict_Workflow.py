@@ -36,7 +36,7 @@ def get_name(file_location):
 
 
 
-def do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline):
+def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
 
     
     truths = gpd.read_file(path_t)
@@ -49,6 +49,7 @@ def do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline):
 
     for pic in glob.glob(img_dir + '\\*.tif'):
         
+        out_dir = out_path
         fn = get_name(pic)
         out_dir = out_dir + '\\' + fn
 

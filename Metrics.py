@@ -53,8 +53,8 @@ def process(truths, predicted, aoi, timeline=False):
     crs = truths.crs
     
     ### if aoi is smaller than the truths domain
-    # print('Clipping truths to AOI')
-    # truths = gpd.clip(truths, aoi)
+    print('Clipping truths to AOI')
+    truths = gpd.clip(truths, aoi)
     
     print('Calculating areas for:\n...Between Truths...')
     between_t = gpd.overlay(aoi, truths, how='difference')

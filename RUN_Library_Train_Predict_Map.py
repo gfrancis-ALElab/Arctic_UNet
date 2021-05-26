@@ -29,7 +29,7 @@ import Predict_Workflow
 
 ### Name for training sequence
 ### (area abr. & date YYYYMMDD)
-Train_name = 'Banks_70000_80e'
+Train_name = 'WR_SuperReg'
 
 
 
@@ -37,10 +37,10 @@ Train_name = 'Banks_70000_80e'
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-main_folder = home + r'\Documents\Planet\Banks'
-img_dir = main_folder + r'\Data\NIR_G_R_mosaics'
-img = img_dir + '\\' + r'Banks_Island_mosaic_NIR_G_R.tif'
-path_t = main_folder + r'\Data\ground_truths\Banks_Island_slumps.shp'
+main_folder = home + r'\Documents\Planet\SuperReg'
+img_dir = main_folder + r'NIR_G_R'
+# img = img_dir + '\\' + r'Banks_Island_mosaic_NIR_G_R.tif'
+path_t = r'C:\Users\gfrancis\Documents\Planet\WR\Data\ground_truths'
 
 
 ### Training Library OUTPUT DIRECTORY
@@ -55,7 +55,7 @@ f = 'GTIFF' ### output format
 ###    For: Augmentation
 aug = 70000 ### number of augmented images to include in library
 ##############################################################################
-Build_Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+# Build_Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -78,7 +78,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 callback_dir = lib_dir + '\\' + name
 save_dir = main_folder + r'\saved_models'
 ##############################################################################
-UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
+# UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -92,8 +92,9 @@ UNet_Train.get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e)
 out_dir = lib_dir + r'\Prediction_Map_%s_%s'%(Train_name,name)
 
 ### SAVED MODEL NAME & DIRECTORY
-model_name = name + '.h5'
-saved_model = save_dir + '\\' + model_name
+# model_name = name + '.h5'
+# saved_model = save_dir + '\\' + model_name
+saved_model = r'C:\Users\gfrancis\Documents\Planet\WR\Training_Library_WR20200818_60000\saved_models\UNet_100x100_Ovr0_rmsprop_21b_20e_60000a_WR20200818_60000.h5'
 
 ### PARAMETERS:
 ###    For: Split
@@ -102,11 +103,11 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = False ### set to false for full metrics output
+timeline = True ### set to false for full metrics output
 
 ### Reset Directories if making timeline
 if timeline:
-    img_dir = r'C:\Users\gfrancis\Documents\Planet\Banks\Data\NIR_G_R_mosaics'
+    img_dir = r'C:\Users\gfrancis\Documents\Planet\SuperReg\NIR_G_R'
     out_dir = main_folder + r'\Timeline_output'
 ##############################################################################
 Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
