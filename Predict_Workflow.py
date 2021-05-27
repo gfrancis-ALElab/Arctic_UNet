@@ -24,7 +24,6 @@ from shapely import speedups
 speedups.disable()
 from shapely.ops import cascaded_union
 import geopandas as gpd
-
 from contextlib import contextmanager
 
 
@@ -36,7 +35,6 @@ def get_name(file_location):
     return filename[0]
 
 
-
 @contextmanager
 def suppress_stdout():
     with open(os.devnull, "w") as devnull:
@@ -46,8 +44,6 @@ def suppress_stdout():
             yield
         finally:
             sys.stdout = old_stdout
-
-
 
 
 def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
@@ -69,7 +65,6 @@ def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
 
         ### Build subfolders
         if os.path.isdir(out_dir) is False:
-            print('Making subfolders...')
             os.makedirs(out_dir)
             os.makedirs(out_dir + '\\tiles')
             os.makedirs(out_dir + '\\predictions')

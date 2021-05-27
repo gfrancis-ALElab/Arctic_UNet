@@ -17,17 +17,30 @@ import Masks
 import Augment
 import geopandas as gpd
 from shapely.ops import cascaded_union
+from contextlib import contextmanager
 
 
 
+def get_name(file_location):
+    filename = file_location.split('\\')[-1]
+    filename = filename.split('.')
+    return filename[0]
 
-##############################################################################
-######################## Build Library Process ###############################
-##############################################################################
+
+@contextmanager
+def suppress_stdout():
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:  
+            yield
+        finally:
+            sys.stdout = old_stdout
 
 
 def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
-
+    
+    fn = get_name(img)
 
     ### Build subfolders
     if os.path.isdir(lib_dir) is False:
@@ -41,14 +54,16 @@ def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
     
     
     ### Split mosic into tiles
-    # Split.split_image(input = img,
-    #                         output_dir = pics_dir,
-    #                         patch_w = w,
-    #                         patch_h = w,
-    #                         adj_overlay_x = Ovr,
-    #                         adj_overlay_y = Ovr,
-    #                         out_format = f
-    #                         )
+    print('Splitting image: %s...'%fn)
+    with suppress_stdout(): ### suppress the long output
+        Split.split_image(input = img,
+                                output_dir = pics_dir,
+                                patch_w = w,
+                                patch_h = w,
+                                adj_overlay_x = Ovr,
+                                adj_overlay_y = Ovr,
+                                out_format = f
+                                )
     
     
     truths = gpd.read_file(path_t)
@@ -56,6 +71,7 @@ def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
     print('\nCascading truths for analysis...')
     truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
     truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
+    
     
     ### Remove bad tiles from library (usually edge tiles) & Re-number
     Filter.remove(pics_dir, truths)

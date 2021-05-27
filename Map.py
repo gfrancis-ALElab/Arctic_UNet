@@ -65,10 +65,10 @@ def combine_shps(map_dir):
         Map = gpd.GeoSeries(cascaded_union(Map['geometry']))
         Map = gpd.GeoDataFrame(geometry=Map, crs=crs)
         Map.to_file(map_dir + '\\cascaded_map.shp')
-        print('Cascaded map saved as .SHP\n\n\n\n')
+        print('Cascaded map saved as .SHP\n\n')
         
     else:
-        print('** No prediction shapes were found **\nMoving on to next image\n\n\n\n')
+        print('** No prediction shapes were found **\n\n\n\n')
         return False
     
     return True
