@@ -65,13 +65,13 @@ def combine_shps(map_dir):
         Map = gpd.GeoSeries(cascaded_union(Map['geometry']))
         Map = gpd.GeoDataFrame(geometry=Map, crs=crs)
         Map.to_file(map_dir + '\\cascaded_map.shp')
-        print('Cascaded map saved as .SHP')
+        print('Cascaded map saved as .SHP\n\n\n\n')
         
     else:
         print('** No prediction shapes were found **\nMoving on to next image\n\n\n\n')
         return False
     
-    return
+    return True
 
 
 
@@ -138,7 +138,7 @@ def build_map(tiles_dir, preds_dir, map_dir):
     
     print('\nBuilding Map...')
     if combine_shps(map_dir):
-        return
+        return True
     else:
         return False
 
