@@ -59,6 +59,8 @@ def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
 
     for pic in glob.glob(img_dir + '\\*.tif'):
         
+        print('##############################################################################')
+        
         out_dir = out_path
         fn = get_name(pic)
         out_dir = out_dir + '\\' + fn

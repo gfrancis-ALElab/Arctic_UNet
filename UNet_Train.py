@@ -26,7 +26,7 @@ from tensorflow import keras
 import numpy as np
 from tensorflow.keras import layers
 import random
-
+import unet2
 
 
 
@@ -150,7 +150,7 @@ def get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e):
     
     
     n = len(input_img_paths)
-    print('\nNumber of training tile-mask pairs: %s'%n)
+    print('\n\nNumber of training tile-mask pairs: %s\n'%n)
     
     
     for input_path, target_path in zip(input_img_paths[:5], target_img_paths[:5]):
@@ -158,7 +158,7 @@ def get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e):
     print('...')
     for input_path, target_path in zip(input_img_paths[-5:], target_img_paths[-5:]):
         print(input_path, "|", target_path)
-    
+    print('\n\n')
     
     ### Free up RAM in case the model definition cells were run multiple times
     keras.backend.clear_session()
