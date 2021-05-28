@@ -78,8 +78,10 @@ def run_metrics(truths, map_dir, pic, fn, save_path, timeline):
 
     TP, betw, FP, FN, Precision, Recall, F1 = process(truths, predicted, aoi_spec, timeline)
     
-    
-    TP.to_file(save_path+'\\%s_TP.shp' % fn)
+    if TP.empty == False:
+        TP.to_file(save_path+'\\%s_TP.shp' % fn)
+    if TP.empty == True:
+        print('** No True Positives found **')
     
     if not timeline:
         print('\nPrecision: %s' % (Precision))

@@ -55,11 +55,14 @@ def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
     truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
     truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
 
-
-
+    total = len([name for name in os.listdir(img_dir)
+                       if os.path.isfile(img_dir + '\\' + name)])
+    
+    count = 1
     for pic in glob.glob(img_dir + '\\*.tif'):
         
-        print('##############################################################################')
+        if timeline:
+            print('############################# Timeline Image: %s / %s ####################################'%(count,total))
         
         out_dir = out_path
         fn = get_name(pic)
@@ -111,7 +114,7 @@ def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
             ### calculate performance metrics (and save True Posities for timeline)
             Metrics.run_metrics(truths, map_dir, pic, fn, met_dir, timeline)
     
-    
+        count += 1
 
     return
 

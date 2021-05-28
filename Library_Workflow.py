@@ -11,6 +11,7 @@ email: gfrancis@uvic.ca
 """
 
 import os
+import sys
 import Split
 import Filter
 import Masks
