@@ -66,7 +66,7 @@ def augment_images(lib_dir, num_sample):
     
     augmented_images = p.sample(num_sample)
     
-    print('\nAdding %s augmented samples to library...'%num_samples)
+    print('\nAdding %s augmented samples to library...'%num_sample)
     for i in range(num_sample):
         # print('Adding augmented image: %s / %s'%(i+1, num_sample))
         Image.fromarray(augmented_images[i][0].astype(np.uint8)).save(pics_dir + '\\%s.jpg'%str(i+ndx))

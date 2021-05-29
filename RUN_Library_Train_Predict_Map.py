@@ -79,7 +79,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 save_dir = main_folder + r'\saved_models'
 callback_dir = save_dir + '\\' + name
 ##############################################################################
-# UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
+UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 
 
 
