@@ -65,6 +65,7 @@ def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
                                 adj_overlay_y = Ovr,
                                 out_format = f
                                 )
+    os.remove('split_image_info.txt')
     
     
     truths = gpd.read_file(path_t)

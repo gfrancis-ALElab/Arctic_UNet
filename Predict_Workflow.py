@@ -100,6 +100,7 @@ Timeline Image: %s / %s \
                             adj_overlay_y = Ovr,
                             out_format = f
                             )
+        os.remove('split_image_info.txt')
     
         
         ### Remove tiles that don't intersect ground truths & Re-number
@@ -130,7 +131,7 @@ Timeline Image: %s / %s \
         os.makedirs(top_folder)
     
         ### copy output maps to top folder
-        for file in glob.glob(out_path + '/**/map/prediction_map*.shp'):
+        for file in glob.glob(out_path + '/**/map/*cascaded_map*'):
             shutil.copy(file, top_folder)
 
     return
