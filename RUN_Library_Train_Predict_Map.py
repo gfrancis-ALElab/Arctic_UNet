@@ -37,7 +37,7 @@ Train_name = 'WR_8b_40e_70000_balanced'
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-main_folder = home + r'\Documents\Planet\WR'
+main_folder = home + r'\Documents\Planet\SuperReg'
 img_dir = main_folder + r'\data\NIR_G_R_mosaics'
 img = img_dir + r'\20200818_mosaic_NIR_G_R_avg50_scaled(0_255).tif'
 path_t = r'C:\Users\gfrancis\Documents\Planet\WR\Data\ground_truths'
@@ -55,7 +55,7 @@ f = 'GTIFF' ### output format
 ###    For: Augmentation
 aug = 70000 ### number of augmented images to include in library
 ##############################################################################
-Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+# Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -79,7 +79,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 save_dir = main_folder + r'\saved_models'
 callback_dir = save_dir + '\\' + name
 ##############################################################################
-UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
+# UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -90,11 +90,12 @@ UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 ###             Deploy Trained Model & Prediction Map Settings
 ##############################################################################
 ### OUTPUT DIRECTORY (single map save location)
-out_dir = lib_dir + r'\Prediction_Map_%s_%s'%(Train_name,name)
+out_dir = lib_dir + r'\Prediction_Map'
 
 ### SAVED MODEL NAME & DIRECTORY
 model_name = name + '.h5'
-saved_model = save_dir + '\\' + model_name
+# saved_model = save_dir + '\\' + model_name
+saved_model = r'C:\Users\gfrancis\Documents\Planet\WR\saved_models' + '\\' + model_name
 
 ### PARAMETERS:
 ###    For: Split
@@ -103,12 +104,12 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = False ### set to false for full metrics output
+timeline = True ### set to false for full metrics output
 
 ### Reset Directories if making timeline
 if timeline:
-    img_dir = r'C:\Users\gfrancis\Documents\Planet\SuperReg\NIR_G_R_standardized'
-    out_dir = main_folder + r'\Timeline_output_standardized'
+    img_dir = r'C:\Users\gfrancis\Documents\Planet\SuperReg\NIR_G_R_mosaics_balanced'
+    out_dir = main_folder + r'\Timeline_output_balanced'
 ##############################################################################
 Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
