@@ -13,6 +13,7 @@ email: gfrancis@uvic.ca
 
 import os
 import sys
+import shutil
 import glob
 import Split
 import Filter
@@ -121,6 +122,16 @@ Timeline Image: %s / %s \
             Metrics.run_metrics(truths, map_dir, pic, fn, met_dir, timeline)
     
         count += 1
+    
+    
+    top_folder = out_path + '/Maps'
+    ### create topfolder to consolidate timeline output
+    if os.path.isdir(top_folder) is False:
+        os.makedirs(top_folder)
+    
+        ### copy output maps to top folder
+        for file in glob.glob(out_path + '/**/map/prediction_map*.shp'):
+            shutil.copy(file, top_folder)
 
     return
 
