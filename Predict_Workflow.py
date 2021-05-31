@@ -114,7 +114,7 @@ Timeline Image: %s / %s \
         
         
         ### create map from prediction tiles
-        if Map.build_map(tiles_dir, pred_dir, map_dir):
+        if Map.build_map(tiles_dir, pred_dir, map_dir, fn):
         
         
             ### calculate performance metrics (and save True Posities for timeline)

@@ -26,7 +26,6 @@ from tensorflow import keras
 import numpy as np
 from tensorflow.keras import layers
 import random
-import unet2
 
 
 

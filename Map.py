@@ -38,7 +38,7 @@ def get_name(file_location):
 
 
 
-def combine_shps(map_dir):
+def combine_shps(map_dir, fn):
     
     input_shp_paths = sorted([
         os.path.join(map_dir, fname)
@@ -64,7 +64,7 @@ def combine_shps(map_dir):
         crs = Map.crs
         Map = gpd.GeoSeries(cascaded_union(Map['geometry']))
         Map = gpd.GeoDataFrame(geometry=Map, crs=crs)
-        Map.to_file(map_dir + '\\cascaded_map.shp')
+        Map.to_file(map_dir + '\\%s_cascaded_map.shp'%fn)
         print('Cascaded map saved as .SHP\n\n')
         
     else:
@@ -75,7 +75,7 @@ def combine_shps(map_dir):
 
 
 
-def build_map(tiles_dir, preds_dir, map_dir):
+def build_map(tiles_dir, preds_dir, map_dir, fn):
 
     input_img_paths = sorted([
             os.path.join(preds_dir, fname)
@@ -137,7 +137,7 @@ def build_map(tiles_dir, preds_dir, map_dir):
     
     
     print('\nBuilding Map...')
-    if combine_shps(map_dir):
+    if combine_shps(map_dir, fn):
         return True
     else:
         return False

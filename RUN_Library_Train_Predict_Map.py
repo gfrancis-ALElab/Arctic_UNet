@@ -109,7 +109,7 @@ timeline = True ### set to false for full metrics output
 ### Reset Directories if making timeline
 if timeline:
     img_dir = r'C:\Users\gfrancis\Documents\Planet\SuperReg\NIR_G_R_mosaics_balanced'
-    out_dir = main_folder + r'\Timeline_output_typo_test'
+    out_dir = main_folder + r'\Timeline'
 ##############################################################################
 Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 

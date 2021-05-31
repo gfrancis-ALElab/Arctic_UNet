@@ -72,7 +72,7 @@ def run_metrics(truths, map_dir, pic, fn, save_path, timeline):
     aoi['area'] = aoi['geometry'].area
     aoi_spec = aoi.loc[aoi['area']==aoi['area'].max()] ### TODO: improve with aoi bounds to remove any possible holes
     
-    predicted = gpd.read_file(map_dir + '\\cascaded_map.shp')
+    predicted = gpd.read_file(map_dir + '\\%s_cascaded_map.shp'%fn)
     assert truths.crs == predicted.crs
 
 
