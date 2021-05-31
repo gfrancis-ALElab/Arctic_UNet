@@ -34,6 +34,12 @@ def get_name(file_location):
     filename = filename.split('.')
     return filename[0]
 
+def get_number(path, pattern):
+    count = 0
+    for file in glob.glob(path + '\\' + pattern):
+        count += 1
+    return count
+
 
 @contextmanager
 def suppress_stdout():
@@ -48,21 +54,21 @@ def suppress_stdout():
 
 def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
 
-    
     truths = gpd.read_file(path_t)
     crs = truths.crs
     print('\nCascading truths for analysis...')
     truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
     truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
 
-    total = len([name for name in os.listdir(img_dir)
-                       if os.path.isfile(img_dir + '\\' + name)])
+    total = get_number(img_dir, '\*tif')
     
     count = 1
     for pic in glob.glob(img_dir + '\\*.tif'):
         
         if timeline:
-            print('############################# Timeline Image: %s / %s ####################################'%(count,total))
+            print('############################# \
+Timeline Image: %s / %s \
+####################################'%(count,total))
         
         out_dir = out_path
         fn = get_name(pic)
