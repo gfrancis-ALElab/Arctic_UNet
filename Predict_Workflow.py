@@ -61,7 +61,7 @@ def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
     truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
     truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
 
-    total = get_number(img_dir, '\*tif')
+    total = get_number(img_dir, '*tif')
     
     count = 1
     for pic in glob.glob(img_dir + '\\*.tif'):
