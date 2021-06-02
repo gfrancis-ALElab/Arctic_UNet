@@ -89,7 +89,7 @@ def build_map(tiles_dir, preds_dir, map_dir, fn):
         
         img = Image.open(input_img_paths[i])
         img_arr = np.array(img)
-        # img_arr = np.where(img_arr == 255, 254, 0)
+
         
         
         ### convert prediction tile to geotiff using original geotiff metadata
