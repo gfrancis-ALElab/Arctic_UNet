@@ -27,6 +27,14 @@ speedups.disable()
 
 
 
+
+maps_lib = r'C:\Users\gfrancis\Documents\Planet\SuperReg\Timeline\Maps'
+pics_lib = r'C:\Users\gfrancis\Documents\Planet\SuperReg\NIR_G_R_mosaics_balanced'
+out_dir = r'C:\Users\gfrancis\Documents\Planet\SuperReg\Timeline\Plots'
+
+
+
+
 def get_name(file_location):
     filename = file_location.split('\\')[-1]
     filename = filename.split('.')
@@ -49,12 +57,8 @@ def max_bounds(lib):
     return h, w
 
 
-
-maps_lib = r'C:\Users\gfrancis\Documents\Planet\SuperReg\Timeline\Maps'
-pics_lib = r'C:\Users\gfrancis\Documents\Planet\SuperReg\NIR_G_R_mosaics_balanced'
-out_dir = r'C:\Users\gfrancis\Documents\Planet\SuperReg\Timeline\Plots'
-truths = r'C:\Users\gfrancis\Documents\Planet\WR\Data\ground_truths'
-aoi = r'C:\Users\gfrancis\Documents\Planet\SuperReg\AOI\20170701_v2_sreg_ch4_AOI.shp'
+# truths = r'C:\Users\gfrancis\Documents\Planet\WR\Data\ground_truths'
+# aoi = r'C:\Users\gfrancis\Documents\Planet\SuperReg\AOI\20170701_v2_sreg_ch4_AOI.shp'
 
 if os.path.isdir(out_dir) is False:
     os.makedirs(out_dir)
