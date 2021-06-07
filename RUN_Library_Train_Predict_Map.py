@@ -29,7 +29,7 @@ import Predict_Workflow
 
 ### Name for training sequence
 ### (area abr. & date YYYYMMDD)
-Train_name = 'WR_8b_40e_70000_balanced'
+Train_name = 'Banks_8b_60e_100000_balanced'
 
 
 
@@ -37,10 +37,10 @@ Train_name = 'WR_8b_40e_70000_balanced'
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-main_folder = home + r'\Documents\Planet\SuperReg'
-img_dir = main_folder + r'\data\NIR_G_R_mosaics'
-img = img_dir + r'\20200818_mosaic_NIR_G_R_avg50_scaled(0_255).tif'
-path_t = r'C:\Users\gfrancis\Documents\Planet\WR\Data\ground_truths'
+main_folder = home + r'\Documents\Planet\Banks'
+img_dir = main_folder + r'\data\NIR_G_R_mosaics_balanced'
+img = img_dir + r'\Banks_Island_mosaic_NIR_G_R_avg50_scaled(0_255).tif'
+path_t = r'C:\Users\gfrancis\Documents\Planet\Banks\Data\ground_truths'
 
 
 ### Training Library OUTPUT DIRECTORY
@@ -53,9 +53,9 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 70000 ### number of augmented images to include in library
+aug = 100000 ### number of augmented images to include in library
 ##############################################################################
-# Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -70,7 +70,7 @@ aug = 70000 ### number of augmented images to include in library
 lib = lib_dir
 c = 2 ### number of classes
 b = 8 ### batch size
-e = 40 ### epochs
+e = 60 ### epochs
 
 ### NAME FOR RUN:   (format as: model_dim_opt_batch_epochs_#augs_areaYYMMDD)
 name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
@@ -79,7 +79,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 save_dir = main_folder + r'\saved_models'
 callback_dir = save_dir + '\\' + name
 ##############################################################################
-# UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
+UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -94,8 +94,7 @@ out_dir = lib_dir + r'\Prediction_Map'
 
 ### SAVED MODEL NAME & DIRECTORY
 model_name = name + '.h5'
-# saved_model = save_dir + '\\' + model_name
-saved_model = r'C:\Users\gfrancis\Documents\Planet\WR\saved_models' + '\\' + model_name
+saved_model = save_dir + '\\' + model_name
 
 ### PARAMETERS:
 ###    For: Split
@@ -104,7 +103,7 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = True ### set to false for full metrics output
+timeline = False ### set to false for full metrics output
 
 ### Reset Directories if making timeline
 if timeline:
