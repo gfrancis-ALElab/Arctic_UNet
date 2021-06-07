@@ -38,7 +38,7 @@ def get_name(file_location):
 
 
 
-def combine_shps(map_dir, fn):
+def combine_shps(map_dir, fn, truths):
     
     input_shp_paths = sorted([
         os.path.join(map_dir, fname)
@@ -52,7 +52,9 @@ def combine_shps(map_dir, fn):
     for i in range(len(input_shp_paths)):
         
         S = gpd.read_file(input_shp_paths[i])
-        joined_shps = joined_shps.geometry.append(S.geometry)
+        intersection = gpd.overlay(truths, S, how='intersection')
+        if intersection.empty == False:
+            joined_shps = joined_shps.geometry.append(S.geometry)
     
     
     if joined_shps.empty == False:
@@ -75,7 +77,7 @@ def combine_shps(map_dir, fn):
 
 
 
-def build_map(tiles_dir, preds_dir, map_dir, fn):
+def build_map(tiles_dir, preds_dir, map_dir, fn, truths):
 
     input_img_paths = sorted([
             os.path.join(preds_dir, fname)
@@ -137,7 +139,7 @@ def build_map(tiles_dir, preds_dir, map_dir, fn):
     
     
     print('\nBuilding Map...')
-    if combine_shps(map_dir, fn):
+    if combine_shps(map_dir, fn, truths):
         return True
     else:
         return False

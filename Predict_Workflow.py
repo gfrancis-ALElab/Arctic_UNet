@@ -116,7 +116,7 @@ Timeline Image: %s / %s \
         
         
         ### create map from prediction tiles
-        if Map.build_map(tiles_dir, pred_dir, map_dir, fn):
+        if Map.build_map(tiles_dir, pred_dir, map_dir, fn, truths):
         
         
             ### calculate performance metrics (and save True Posities for timeline)
@@ -126,7 +126,7 @@ Timeline Image: %s / %s \
     
     
     top_folder = out_path + '/Maps'
-    ### create topfolder to consolidate timeline output
+    ### create topfolder to consolidate prediction/timeline output
     if os.path.isdir(top_folder) is False:
         os.makedirs(top_folder)
     
