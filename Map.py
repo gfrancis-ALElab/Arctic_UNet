@@ -52,9 +52,7 @@ def combine_shps(map_dir, fn, truths):
     for i in range(len(input_shp_paths)):
         
         S = gpd.read_file(input_shp_paths[i])
-        intersection = gpd.overlay(truths, S, how='intersection')
-        if intersection.empty == False:
-            joined_shps = joined_shps.geometry.append(S.geometry)
+        joined_shps = joined_shps.geometry.append(S.geometry)
     
     
     if joined_shps.empty == False:
@@ -143,49 +141,6 @@ def build_map(tiles_dir, preds_dir, map_dir, fn, truths):
         return True
     else:
         return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

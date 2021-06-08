@@ -49,7 +49,7 @@ def remove(lib, truths, overlap_only=True):
     ### keep only overlap tiles
     if overlap_only:
     
-        print('\nFiltering non-overlapping tiles...')
+        print('\nFiltering non-intersecting tiles...')
         
         count = 0
         r = 0

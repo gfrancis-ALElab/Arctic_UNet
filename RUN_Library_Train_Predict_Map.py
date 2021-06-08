@@ -29,7 +29,7 @@ import Predict_Workflow
 
 ### Name for training sequence
 ### (area abr. & date YYYYMMDD)
-Train_name = 'Banks_8b_60e_100000_balanced'
+Train_name = 'Banks_20b_20e_80000'
 
 
 
@@ -38,9 +38,9 @@ Train_name = 'Banks_8b_60e_100000_balanced'
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
 main_folder = home + r'\Documents\Planet\Banks'
-img_dir = main_folder + r'\data\NIR_G_R_mosaics_balanced'
+img_dir = main_folder + r'\Data\NIR_G_R_mosaics_balanced'
 img = img_dir + r'\Banks_Island_mosaic_NIR_G_R_avg50_scaled(0_255).tif'
-path_t = r'C:\Users\gfrancis\Documents\Planet\Banks\Data\ground_truths'
+path_t = home + r'\Documents\Planet\Banks\Data\ground_truths\Banks_Island_slumps.shp'
 
 
 ### Training Library OUTPUT DIRECTORY
@@ -53,7 +53,7 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 100000 ### number of augmented images to include in library
+aug = 80000 ### number of augmented images to include in library
 ##############################################################################
 Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
@@ -69,8 +69,8 @@ Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 ###    For: Training
 lib = lib_dir
 c = 2 ### number of classes
-b = 8 ### batch size
-e = 60 ### epochs
+b = 20 ### batch size
+e = 20 ### epochs
 
 ### NAME FOR RUN:   (format as: model_dim_opt_batch_epochs_#augs_areaYYMMDD)
 name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
@@ -96,6 +96,7 @@ out_dir = lib_dir + r'\Prediction_Map'
 model_name = name + '.h5'
 saved_model = save_dir + '\\' + model_name
 
+
 ### PARAMETERS:
 ###    For: Split
 w = 50 ### width (pixels)
@@ -108,9 +109,9 @@ timeline = False ### set to false for full metrics output
 ### Reset Directories if making timeline
 if timeline:
     img_dir = r'C:\Users\gfrancis\Documents\Planet\SuperReg\NIR_G_R_mosaics_balanced'
-    out_dir = main_folder + r'\Timeline'
+    out_dir = main_folder + r'\Timeline2.0'
 ##############################################################################
-Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
+# Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
 
 
