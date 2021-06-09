@@ -28,8 +28,7 @@ import Predict_Workflow
 
 
 ### Name for training sequence
-### (area abr. & date YYYYMMDD)
-Train_name = 'Banks_20b_20e_80000'
+Train_name = 'WR_full_timeline'
 
 
 
@@ -37,10 +36,10 @@ Train_name = 'Banks_20b_20e_80000'
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-main_folder = home + r'\Documents\Planet\Banks'
-img_dir = main_folder + r'\Data\NIR_G_R_mosaics_balanced'
-img = img_dir + r'\Banks_Island_mosaic_NIR_G_R_avg50_scaled(0_255).tif'
-path_t = home + r'\Documents\Planet\Banks\Data\ground_truths\Banks_Island_slumps.shp'
+main_folder = home + r'\Documents\Planet\WR_timline'
+# img_dir = main_folder + r'\Data\NIR_G_R_mosaics_balanced'
+# img = img_dir + r'\Banks_Island_mosaic_NIR_G_R_avg50_scaled(0_255).tif'
+path_t = home + r'\Documents\Planet\WR\Data\ground_truths\Willow_River_Thaw_Slumps_poly.shp'
 
 
 ### Training Library OUTPUT DIRECTORY
@@ -53,9 +52,9 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 80000 ### number of augmented images to include in library
+aug = 50000 ### number of augmented images to include in library
 ##############################################################################
-Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+# Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -69,7 +68,7 @@ Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 ###    For: Training
 lib = lib_dir
 c = 2 ### number of classes
-b = 20 ### batch size
+b = 8 ### batch size
 e = 20 ### epochs
 
 ### NAME FOR RUN:   (format as: model_dim_opt_batch_epochs_#augs_areaYYMMDD)
@@ -79,7 +78,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 save_dir = main_folder + r'\saved_models'
 callback_dir = save_dir + '\\' + name
 ##############################################################################
-UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
+# UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -87,14 +86,15 @@ UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 
 
 
-###             Deploy Trained Model & Prediction Map Settings
+###       Deploy Trained Model & Prediction Map / Timeline Settings
 ##############################################################################
 ### OUTPUT DIRECTORY (single map save location)
 out_dir = lib_dir + r'\Prediction_Map'
 
 ### SAVED MODEL NAME & DIRECTORY
-model_name = name + '.h5'
-saved_model = save_dir + '\\' + model_name
+# model_name = name + '.h5'
+# saved_model = save_dir + '\\' + model_name
+saved_model = home +  r'\Documents\Planet\WR\saved_models\UNet_100x100_Ovr0_rmsprop_8b_40e_70000a_WR_8b_40e_70000_balanced.h5'
 
 
 ### PARAMETERS:
@@ -104,14 +104,14 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = False ### set to false for full metrics output
+timeline = True ### set to false for full metrics output
 
 ### Reset Directories if making timeline
 if timeline:
-    img_dir = r'C:\Users\gfrancis\Documents\Planet\SuperReg\NIR_G_R_mosaics_balanced'
-    out_dir = main_folder + r'\Timeline2.0'
+    img_dir = home + r'\Documents\Planet\WR_timline\NIR_G_R_mosaics_balanced'
+    out_dir = main_folder + r'\Timeline'
 ##############################################################################
-# Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
+Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
 
 
