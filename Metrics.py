@@ -100,7 +100,7 @@ def run_metrics(truths, map_dir, pic, fn, save_path, timeline):
         predicted.to_file(save_path+'\\%s_predictions.shp' % fn)
         aoi_spec.to_file(save_path+'\\%s_AOI.shp' % fn)
     
-    print('\nMetrics saved for %s.\n\n\n\n'%fn)
+    print('\nMetrics saved for: %s.\n\n\n\n'%fn)
     
 
     return

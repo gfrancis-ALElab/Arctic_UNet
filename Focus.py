@@ -30,11 +30,11 @@ speedups.disable()
 
 
 
-maps_lib = r'C:\Users\gfrancis\Documents\Planet\SuperReg\Timeline\maps'
-pics_lib = r'C:\Users\gfrancis\Documents\Planet\SuperReg\NIR_G_R_mosaics_balanced'
-out_dir = r'C:\Users\gfrancis\Documents\Planet\SuperReg\Timeline\Priority_Regions'
+maps_lib = r'C:\Users\gfrancis\Documents\Planet\WR_timeline\Timeline\Maps'
+pics_lib = r'C:\Users\gfrancis\Documents\Planet\WR_timeline\NIR_G_R_mosaics_balanced'
+out_dir = r'C:\Users\gfrancis\Documents\Planet\WR_timeline\Priority_Regions'
 truths_dir = r'C:\Users\gfrancis\Documents\Planet\WR\Data\ground_truths'
-aoi = r'C:\Users\gfrancis\Documents\Planet\SuperReg\AOI\20170701_v2_sreg_ch4_AOI.shp'
+
 
 
 
@@ -48,12 +48,9 @@ def max_bounds(lib):
     
     h = w = 0
     for raster in glob.glob(lib + '/*.tif'):
-        
         r = rasterio.open(raster)
-        
         if r.meta['height'] > h:
             h = r.meta['height']
-        
         if r.meta['width'] > w:
             w = r.meta['width']
     
@@ -106,7 +103,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
             arr[:ras_arr.shape[0], :ras_arr.shape[1]] += ras_arr
     
         count += 1
-        assert count==arr.max()
+        # assert count==arr.max()
     
     
     
@@ -219,25 +216,23 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         print('Priority regions saved.')
 
 
-    return
+    return arr
 
 
 
-stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
+Stack = stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
 
 
 
 
 
 
-
+# #%%
 
 # import matplotlib.pyplot as plt
 # fig, ax = plt.subplots()
-# truths.plot(ax=ax, facecolor='black', alpha=0.5)
-# polys.plot(ax=ax, facecolor='red', alpha=0.5)
-# polys_overlap.plot(ax=ax, facecolor='blue', alpha=0.5)
-# polys_exp.plot(ax=ax, facecolor='green', alpha=0.5)
+# # truths.plot(ax=ax, facecolor='black', alpha=0.5)
+# plt.imshow(Stack)
 
 
 
