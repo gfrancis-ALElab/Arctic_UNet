@@ -54,7 +54,7 @@ def max_bounds(lib):
         if r.meta['width'] > w:
             w = r.meta['width']
     
-    return h, w
+    return h, w, r.meta
 
 
 ### thresh ### minimum faction of frames needing detection agreement
@@ -64,19 +64,25 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     if os.path.isdir(out_dir) is False:
         os.makedirs(out_dir)
     
-    h, w = max_bounds(pics_lib)
+    h, w, meta = max_bounds(pics_lib)
     arr = np.zeros((h, w))
-    
+    arr_list = []
+    names_list = []
     print('Stacking prediction outputs...')
     count = 0
     for raster in glob.glob(pics_lib + '/*.tif'):
     
         fn = get_name(raster)
+        names_list.append(fn[2:10])
         shapefile = maps_lib + '\\' + fn + r'_cascaded_map.shp'
     
         ras = rasterio.open(raster)
         shapefile = gpd.read_file(shapefile)
-        meta = ras.meta.copy()
+        # meta = ras.meta.copy()
+        # meta['nodata'] = 255
+        # meta['height'] = h
+        # meta['width'] = w
+        # print(meta)
     
         temp = out_dir + r'\temp_%s.tif'%fn
         with rasterio.open(temp, 'w+', **meta) as out:
@@ -99,12 +105,28 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     
         if ras_arr.shape == arr.shape:
             arr += ras_arr
+            arr_list.append(ras_arr)
         else:
             arr[:ras_arr.shape[0], :ras_arr.shape[1]] += ras_arr
+            temp_arr = np.zeros(arr.shape)
+            temp_arr[:ras_arr.shape[0], :ras_arr.shape[1]] += ras_arr
+            arr_list.append(temp_arr)
     
         count += 1
-        # assert count==arr.max()
     
+    
+    ### calculate differences between dates
+    fstack = np.zeros(arr.shape)
+    bstack = np.zeros(arr.shape)
+    diff_count = 0
+    print('Stacking differences...')
+    for i in range(len(arr_list)-1):
+        diff = arr_list[i+1] - arr_list[i]
+        fdiff = np.where(diff==1, 1, 0)
+        fstack += fdiff
+        bdiff = np.where(diff==-1, -1, 0)
+        bstack += bdiff
+        diff_count += 1
     
     
     
@@ -181,6 +203,11 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     for j in range(s, ras_arr2[:,0].size - s):
         for i in range(s, ras_arr2[0,:].size - s):
             expanded[j, i] = np.max(ras_arr2[j-s:j+s, i-s:i+s])
+        
+            
+    ### crop forward & backward differences with expanded priority areas
+    fstack = np.where(expanded==1, fstack, 0)
+    bstack = np.where(expanded==1, bstack, 0)
     
     
     ### save array as .GEOTIF with same meta data as before
@@ -216,23 +243,27 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         print('Priority regions saved.')
 
 
-    return arr
+    return arr, arr_list, fstack, bstack
 
 
 
-Stack = stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
+Stack, List, FDiff, BDiff = stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
 
 
 
 
 
 
-# #%%
+#%%
 
-# import matplotlib.pyplot as plt
-# fig, ax = plt.subplots()
-# # truths.plot(ax=ax, facecolor='black', alpha=0.5)
-# plt.imshow(Stack)
+DIFF = FDiff + BDiff
+
+#%%
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots()
+# truths.plot(ax=ax, facecolor='black', alpha=0.5)
+plt.imshow(DIFF)
 
 
 
