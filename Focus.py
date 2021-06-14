@@ -65,7 +65,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         os.makedirs(out_dir)
     
     h, w, meta = max_bounds(pics_lib)
-    arr = np.zeros((h, w))
+    arr_stack = np.zeros((h, w))
     arr_list = []
     names_list = []
     print('Stacking prediction outputs...')
@@ -78,12 +78,10 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     
         ras = rasterio.open(raster)
         shapefile = gpd.read_file(shapefile)
-        # meta = ras.meta.copy()
-        # meta['nodata'] = 255
-        # meta['height'] = h
-        # meta['width'] = w
-        # print(meta)
-    
+
+        ### read in .SHP & convert to .GEOTIF to extract array from raster
+        ### arrays are help individually in arr_list
+        ### arrays are aggregated into arr_stack
         temp = out_dir + r'\temp_%s.tif'%fn
         with rasterio.open(temp, 'w+', **meta) as out:
             out_arr = out.read(1)
@@ -103,35 +101,22 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         if ras_arr.max() > 1:
             ras_arr = np.where(ras_arr > 1, 0, 1)
     
-        if ras_arr.shape == arr.shape:
-            arr += ras_arr
+        if ras_arr.shape == arr_stack.shape:
+            arr_stack += ras_arr
             arr_list.append(ras_arr)
         else:
-            arr[:ras_arr.shape[0], :ras_arr.shape[1]] += ras_arr
-            temp_arr = np.zeros(arr.shape)
+            arr_stack[:ras_arr.shape[0], :ras_arr.shape[1]] += ras_arr
+            temp_arr = np.zeros(arr_stack.shape)
             temp_arr[:ras_arr.shape[0], :ras_arr.shape[1]] += ras_arr
             arr_list.append(temp_arr)
     
         count += 1
     
     
-    ### calculate differences between dates
-    fstack = np.zeros(arr.shape)
-    bstack = np.zeros(arr.shape)
-    diff_count = 0
-    print('Stacking differences...')
-    for i in range(len(arr_list)-1):
-        diff = arr_list[i+1] - arr_list[i]
-        fdiff = np.where(diff==1, 1, 0)
-        fstack += fdiff
-        bdiff = np.where(diff==-1, -1, 0)
-        bstack += bdiff
-        diff_count += 1
-    
-    
-    
-    cut = arr.max()*(thresh)
-    filtered = np.where(arr > cut, 1, 0)
+    ### filter out everything below 20th percentile
+    ### threshold is 20% of max prominance in stack
+    cut = arr_stack.max()*(thresh)
+    filtered = np.where(arr_stack > cut, 1, 0)
     
     
     ### save array as .GEOTIF with same meta data as before
@@ -141,6 +126,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         out.write(filtered.astype(rasterio.uint8), 3) ### visulaize in blue
     
     
+    ### convert .GEOTIF into .SHP
     with rasterio.open(saved) as data:
     
         crs = data.crs
@@ -163,21 +149,19 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
     
-        polys.to_file(out_dir + '\\stack_%sperc.shp'%str(int(thresh*100)))
-        # print('Stack saved.')
+        # polys.to_file(out_dir + '\\stack_%sperc.shp'%str(int(thresh*100)))
     
     
-    
+    ### remove polygons that don't overlap ground truths
     print('Applying truths overlap filter')
     truths = gpd.read_file(truths_dir)
     polys['mask'] = list(polys.intersects(truths.unary_union))
     polys_overlap = polys[polys['mask'] == True].geometry
     polys_overlap = gpd.GeoDataFrame(polys_overlap)
-    polys_overlap.to_file(out_dir + '\\overlap_stack_%sperc.shp'%str(int(thresh*100)))
+    # polys_overlap.to_file(out_dir + '\\overlap_stack_%sperc.shp'%str(int(thresh*100)))
     
     
-    
-    ### project filtered & overlapped polygons back into raster for expanding window filter
+    ### project filtered & overlapped polygons back into raster for buffer filter
     temp = out_dir + r'\temp.tif'
     with rasterio.open(temp, 'w+', **meta) as out:
         out_arr = out.read(1)
@@ -195,7 +179,8 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         os.remove(temp + r'.aux.xml')
     
     
-    ### sliding window max filter
+    ### Create buffer around polygons
+    ### using sliding window max filter
     s = np.int(win/2)
     expanded = np.zeros(ras_arr2.shape)
     
@@ -203,15 +188,10 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     for j in range(s, ras_arr2[:,0].size - s):
         for i in range(s, ras_arr2[0,:].size - s):
             expanded[j, i] = np.max(ras_arr2[j-s:j+s, i-s:i+s])
-        
-            
-    ### crop forward & backward differences with expanded priority areas
-    fstack = np.where(expanded==1, fstack, 0)
-    bstack = np.where(expanded==1, bstack, 0)
     
     
     ### save array as .GEOTIF with same meta data as before
-    saved = out_dir + '\\Priority_%st_%sw.tif'%(str(int(thresh*100)), win)
+    saved = out_dir + '\\Priority_%sthresh_%sbuffer.tif'%(str(int(thresh*100)), win)
     meta['nodata'] = 0
     with rasterio.open(saved, 'w+', **meta) as out:
         out.write(expanded.astype(rasterio.uint8), 3) ### visulaize in blue
@@ -239,31 +219,75 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         df = pd.DataFrame(l)
         polys_exp = gpd.GeoDataFrame(geometry=df[0], crs=crs)
     
-        polys_exp.to_file(out_dir + '\\Priority_%st_%sw.shp'%(str(int(thresh*100)), win))
+        polys_exp.to_file(out_dir + '\\Priority_%sthresh_%sbuffer.shp'%(str(int(thresh*100)), win))
         print('Priority regions saved.')
 
 
-    return arr, arr_list, fstack, bstack
+    ### crop stack and stack list with buffered regions
+    stack_clipped = np.where(expanded==1, arr_stack, 0)
+    arr_list_clipped = []
+    for i in range(len(arr_list)):
+        arr_list_clipped.append(np.where(expanded==1, arr_list[i], 0))
+
+
+    return stack_clipped, arr_list_clipped
 
 
 
-Stack, List, FDiff, BDiff = stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
-
-
-
+Stack, List = stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
 
 
 
 #%%
+### create cumulative list stack in which each is the union of all previous
+cumulative = [List[0]]
+for i in range(1,len(List)):
+    cumulative.append(np.where((List[i]+cumulative[i-1])>0, 1, 0))
 
-DIFF = FDiff + BDiff
+
+### stack & list consecutive differences
+diff = np.zeros(cumulative[0].shape)
+diff_list = []
+for i in range(len(cumulative)-1):
+    diff += cumulative[i+1] - cumulative[i]
+    diff_list.append(cumulative[i+1] - cumulative[i])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #%%
 
 import matplotlib.pyplot as plt
-fig, ax = plt.subplots()
+# fig, ax = plt.subplots()
 # truths.plot(ax=ax, facecolor='black', alpha=0.5)
-plt.imshow(DIFF)
+plt.imshow(cumulative[0])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
