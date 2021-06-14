@@ -25,8 +25,8 @@ import rasterio.features as features
 from shapely.geometry import shape
 from shapely import speedups
 speedups.disable()
-
-
+from PIL import Image
+import datetime
 
 
 
@@ -230,20 +230,29 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         arr_list_clipped.append(np.where(expanded==1, arr_list[i], 0))
 
 
-    return stack_clipped, arr_list_clipped
+    return stack_clipped, arr_list_clipped, meta, names_list
 
 
 
-Stack, List = stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
+Stack, List, meta, dates = stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
 
 
 
-#%%
+#%%    Process stack list into cumulative list & difference list
+
+if os.path.isdir(out_dir + r'\cumulatives') is False:
+    os.makedirs(out_dir + r'\cumulatives')
+    os.makedirs(out_dir + r'\differences')
+c_out = out_dir + r'\cumulatives'
+d_out = out_dir + r'\differences'
+
 ### create cumulative list stack in which each is the union of all previous
 cumulative = [List[0]]
+Image.fromarray(np.uint8(cumulative[0]*255)).save(c_out + '\\%s.jpg'%dates[0])
+
 for i in range(1,len(List)):
     cumulative.append(np.where((List[i]+cumulative[i-1])>0, 1, 0))
-
+    Image.fromarray(np.uint8(cumulative[i]*255)).save(c_out + '\\%s.jpg'%dates[i])
 
 ### stack & list consecutive differences
 diff = np.zeros(cumulative[0].shape)
@@ -251,19 +260,91 @@ diff_list = []
 for i in range(len(cumulative)-1):
     diff += cumulative[i+1] - cumulative[i]
     diff_list.append(cumulative[i+1] - cumulative[i])
+    Image.fromarray(np.uint8(diff_list[i]*255)).save(d_out + '\\%s.jpg'%dates[i])
 
 
+#%%    Convert & save .SHP files for cumulatives and differences
+    
+print('Saving cumulative regions as .SHP files')
+for i in range(len(cumulative)):
+    
+    ### save array as .GEOTIF with same meta data as before
+    temp = c_out + '\\temp_%s.tif'%dates[i]
+    meta['nodata'] = 0
+    with rasterio.open(temp, 'w+', **meta) as out:
+        out.write(cumulative[i].astype(rasterio.uint8), 3) ### visulaize in blue
+    
+    
+    ### convert .GEOTIF into .SHP
+    with rasterio.open(temp) as data:
+    
+        crs = data.crs
+        M = data.dataset_mask()
+        mask = M != 0
+    
+        geo_list = []
+        for g, val in features.shapes(M, transform=data.transform, mask=mask):
+    
+            # Transform shapes from the dataset's own coordinate system
+            geom = rasterio.warp.transform_geom(
+                crs, crs, g, precision=6)
+            geo_list.append(geom)
+    
+    l = []
+    for k in range(len(geo_list)):
+        l.append(shape(geo_list[k]))
+    
+    if len(l) > 0:
+        df = pd.DataFrame(l)
+        polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
+    
+        polys.to_file(c_out + '\\%s.shp'%dates[i])
+    
+    ### delete temporary raster
+    os.remove(temp)
+    if os.path.isfile(temp + r'.aux.xml'):
+        os.remove(temp + r'.aux.xml')
+    
 
-
-
-
-
-
-
-
-
-
-
+print('Saving extent changes as .SHP files')
+for i in range(len(diff_list)):
+    
+    ### save array as .GEOTIF with same meta data as before
+    temp = d_out + '\\temp_%s.tif'%dates[i+1]
+    meta['nodata'] = 0
+    with rasterio.open(temp, 'w+', **meta) as out:
+        out.write(diff_list[i].astype(rasterio.uint8), 3) ### visulaize in blue
+    
+    
+    ### convert .GEOTIF into .SHP
+    with rasterio.open(temp) as data:
+    
+        crs = data.crs
+        M = data.dataset_mask()
+        mask = M != 0
+    
+        geo_list = []
+        for g, val in features.shapes(M, transform=data.transform, mask=mask):
+    
+            # Transform shapes from the dataset's own coordinate system
+            geom = rasterio.warp.transform_geom(
+                crs, crs, g, precision=6)
+            geo_list.append(geom)
+    
+    l = []
+    for k in range(len(geo_list)):
+        l.append(shape(geo_list[k]))
+    
+    if len(l) > 0:
+        df = pd.DataFrame(l)
+        polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
+    
+        polys.to_file(d_out + '\\%s.shp'%dates[i+1])
+    
+    ### delete temporary raster
+    os.remove(temp)
+    if os.path.isfile(temp + r'.aux.xml'):
+        os.remove(temp + r'.aux.xml')
 
 
 
