@@ -348,12 +348,21 @@ for i in range(len(diff_list)):
 
 
 
-#%%
+#%%    Compile Total Area Timeline
 
-import matplotlib.pyplot as plt
-# fig, ax = plt.subplots()
-# truths.plot(ax=ax, facecolor='black', alpha=0.5)
-plt.imshow(cumulative[0])
+def area(df):
+    df['area'] = df['geometry'].area
+    return np.sum(df['area']) ### area in m^2
+
+area = []
+Date = []
+i = 0
+for shapefile in glob.glob(c_out + '/*.shp'):
+    
+    shapes = gpd.read_file(shapefile)
+    area.append(area(shapes))
+    Date.append(date[i])
+    i+=1
 
 
 
