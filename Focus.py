@@ -431,6 +431,8 @@ for i in range(len(area_c)):
         ni.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
     else:
         tw.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+        
+        
 #%%
 seasons = [tw, ni, ei, se, si, fi, fo, th, tv, el]
 years = ['2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011']
