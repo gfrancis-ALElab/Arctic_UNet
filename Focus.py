@@ -27,6 +27,11 @@ from shapely import speedups
 speedups.disable()
 from PIL import Image
 import datetime
+import matplotlib.pyplot as plt
+plt.rcParams.update({'font.size': 14})
+import matplotlib.dates as mdates
+import matplotlib.ticker as ticker
+#%%
 
 
 
@@ -354,27 +359,102 @@ def area(df):
     df['area'] = df['geometry'].area
     return np.sum(df['area']) ### area in m^2
 
-area = []
-Date = []
+area_c = []
+Dates = []
 i = 0
 for shapefile in glob.glob(c_out + '/*.shp'):
     
     shapes = gpd.read_file(shapefile)
-    area.append(area(shapes))
-    Date.append(date[i])
+    area_c.append(area(shapes))
+    Dates.append(datetime.date(int(dates[i][:4]), int(dates[i][4:6]), int(dates[i][6:])))
     i+=1
 
 
+area_d = []
+i = 0
+for shapefile in glob.glob(d_out + '/*.shp'):
+    
+    shapes = gpd.read_file(shapefile)
+    area_d.append(area(shapes))
+    i+=1
+
+### convert to ha
+area_c = np.array(area_c)*0.0001
+
+#%%    Plot timelines
+
+fig_lib = r'C:\Users\gfrancis\Documents\Figures'
 
 
+plt.figure(figsize=(20,10))
+plt.scatter(Dates, area_c, color='black', s=7)
+# plt.plot(Dates[1:], area_d)
+plt.ylabel('Area [ha]')
+plt.xlabel('Date [YYYY]')
+plt.title('Willow River\nThaw Slump Extent\n(within 50 $km^2$ AOI)')
+# plt.tight_layout()
+plt.savefig(fig_lib + '\\timeline_scatter.svg', format="svg")
 
 
+#%%
 
+el = []
+tv = []
+th = []
+fo = []
+fi = []
+si = []
+se = []
+ei = []
+ni = []
+tw = []
 
+for i in range(len(area_c)):
+    
+    if Dates[i] < datetime.date(2012, 1, 1):
+        el.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+    elif Dates[i] < datetime.date(2013, 1, 1):
+        tv.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+    elif Dates[i] < datetime.date(2014, 1, 1):
+        th.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+    elif Dates[i] < datetime.date(2015, 1, 1):
+        fo.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+    elif Dates[i] < datetime.date(2016, 1, 1):
+        fi.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+    elif Dates[i] < datetime.date(2017, 1, 1):
+        si.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+    elif Dates[i] < datetime.date(2018, 1, 1):
+        se.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+    elif Dates[i] < datetime.date(2019, 1, 1):
+        ei.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+    elif Dates[i] < datetime.date(2020, 1, 1):
+        ni.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+    else:
+        tw.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
+#%%
+seasons = [tw, ni, ei, se, si, fi, fo, th, tv, el]
+years = ['2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011']
+m = ['x', 'o', 'v', '2', 's', '+', 'D', '^', '*', 'd']
 
-
-
-
+fig, ax = plt.subplots(figsize=(8,10))
+c = 0
+for series in seasons:
+    # ax.scatter(*zip(*series), s=7, label=years[c])
+    ax.plot(*zip(*series), ':', color='black', linewidth=1, marker=m[c], markersize=4, label=years[c])
+    c += 1
+Fmt = mdates.DateFormatter('%b')
+ax.xaxis.set_major_formatter(Fmt)
+ticks = ax.get_xticks()
+Ticks = []
+for i in range(len(ticks)):
+    if i%2 != 0: Ticks.append(ticks[i])
+plt.xticks(Ticks)
+plt.legend(loc=(0.86,0.12))
+plt.ylabel('Area [ha]')
+plt.xlabel('Date [Mon.]')
+plt.title('Willow River\nThaw Slump Extent\n(within 50 $km^2$ AOI)')
+# plt.tight_layout()
+plt.savefig(fig_lib + '\\timeline_seasonal_bw.svg', format="svg")
 
 
 
