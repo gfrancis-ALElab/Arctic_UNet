@@ -31,8 +31,8 @@ def augment_images(lib_dir, num_sample):
     
     print('\nCreating augmented images')
     
-    pics_dir = lib_dir + '\\pics'
-    masks_dir = lib_dir + '\\masks'
+    pics_dir = lib_dir + '/pics'
+    masks_dir = lib_dir + '/masks'
     
     ground_truth_images = natsorted(glob.glob(pics_dir + '/*.jpg'))
     segmentation_mask_images = natsorted(glob.glob(masks_dir + '/*.png'))
@@ -69,8 +69,8 @@ def augment_images(lib_dir, num_sample):
     print('\nAdding %s augmented samples to library...'%num_sample)
     for i in range(num_sample):
         # print('Adding augmented image: %s / %s'%(i+1, num_sample))
-        Image.fromarray(augmented_images[i][0].astype(np.uint8)).save(pics_dir + '\\%s.jpg'%str(i+ndx))
-        Image.fromarray(augmented_images[i][1].astype(np.uint8)).save(masks_dir + '\\%s.png'%str(i+ndx))
+        Image.fromarray(augmented_images[i][0].astype(np.uint8)).save(pics_dir + '/%s.jpg'%str(i+ndx))
+        Image.fromarray(augmented_images[i][1].astype(np.uint8)).save(masks_dir + '/%s.png'%str(i+ndx))
     
     size_p = len(glob.glob(pics_dir + '/*.jpg'))
     size_m = len(glob.glob(masks_dir + '/*.png'))

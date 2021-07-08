@@ -125,8 +125,8 @@ def get_model(img_size, num_classes):
 def get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e):
     
     
-    pics_dir = lib_dir + '\\pics'
-    masks_dir = lib_dir + '\\masks'
+    pics_dir = lib_dir + '/pics'
+    masks_dir = lib_dir + '/masks'
     
     num_classes = c
     batch_size = b
@@ -201,7 +201,7 @@ def get_smarter(lib_dir, name, callback_dir, save_dir, c, b, e):
     model.fit(train_gen, epochs=epochs, validation_data=val_gen, callbacks=callbacks, verbose=2)
     
     
-    model.save(save_dir + '\\%s.h5'%name)
+    model.save(save_dir + '/%s.h5'%name)
     print('\nTraining complete. Model saved.\n\n')
     
     return

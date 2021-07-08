@@ -35,7 +35,7 @@ def data_check(M):
 
 
 def get_name(file_location):
-    filename = file_location.split('\\')[-1]
+    filename = file_location.split('/')[-1]
     filename = filename.split('.')
     return filename[0]
 
@@ -43,7 +43,7 @@ def get_name(file_location):
 def remove(lib, truths, overlap_only=True):
     
     total_tiles = len([name for name in os.listdir(lib)
-                       if os.path.isfile(lib + '\\' + name)])
+                       if os.path.isfile(lib + '/' + name)])
     
     
     ### keep only overlap tiles
@@ -53,7 +53,7 @@ def remove(lib, truths, overlap_only=True):
         
         count = 0
         r = 0
-        for pic in glob.glob(lib + '\\*.tif'):
+        for pic in glob.glob(lib + '/*.tif'):
     
             geo_list = []
             with rasterio.open(pic) as dataset:
@@ -99,12 +99,12 @@ def remove(lib, truths, overlap_only=True):
         
         print('Re-numbering...')
         count = 0
-        for pic in glob.glob(lib + '\\*.tif'):
-            os.rename(pic, lib + '\\n%s.tif'%count)
+        for pic in glob.glob(lib + '/*.tif'):
+            os.rename(pic, lib + '/n%s.tif'%count)
             count += 1
         count = 0
-        for pic in glob.glob(lib + '\\*.tif'):
-            os.rename(pic, lib + '\\%s.tif'%count)
+        for pic in glob.glob(lib + '/*.tif'):
+            os.rename(pic, lib + '/%s.tif'%count)
             count += 1
         
         return
@@ -118,7 +118,7 @@ def remove(lib, truths, overlap_only=True):
         
         count = 0
         r = 0
-        for pic in glob.glob(lib + '\\*.tif'):
+        for pic in glob.glob(lib + '/*.tif'):
             
             # print('Filtering: %s / %s'%(count+1, total_tiles))
         
@@ -150,12 +150,12 @@ def remove(lib, truths, overlap_only=True):
         
         print('Re-numbering...')
         count = 0
-        for pic in glob.glob(lib + '\\*.tif'):
-            os.rename(pic, lib + '\\n%s.tif'%count)
+        for pic in glob.glob(lib + '/*.tif'):
+            os.rename(pic, lib + '/n%s.tif'%count)
             count += 1
         count = 0
-        for pic in glob.glob(lib + '\\*.tif'):
-            os.rename(pic, lib + '\\%s.tif'%count)
+        for pic in glob.glob(lib + '/*.tif'):
+            os.rename(pic, lib + '/%s.tif'%count)
             count += 1
     
     return

@@ -23,16 +23,16 @@ def to_jpg(lib):
     
     
     total_tiles = len([name for name in os.listdir(lib)
-                   if os.path.isfile(lib + '\\' + name)])
+                   if os.path.isfile(lib + '/' + name)])
     
     
     print('Making .JPG copies for model input...')
     for i in range(total_tiles):
         
-        Gtif = lib + '\\%s.tif'%i
+        Gtif = lib + '/%s.tif'%i
         G = Image.open(Gtif)
         arr_G = np.array(G)
-        Image.fromarray(arr_G.astype(np.uint8)).save(lib + '\\%s.jpg'%i)
+        Image.fromarray(arr_G.astype(np.uint8)).save(lib + '/%s.jpg'%i)
     
 
     return

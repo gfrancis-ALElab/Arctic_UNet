@@ -22,7 +22,7 @@ from tensorflow.keras.preprocessing.image import load_img
 
 
 def get_name(file_location):
-    filename = file_location.split('\\')[-1]
+    filename = file_location.split('/')[-1]
     filename = filename.split('.')
 
     return int(filename[0])
@@ -91,7 +91,7 @@ def deploy_model(saved_model, pics_dir, save_dir):
         mask = np.expand_dims(mask, axis=-1)
         img = PIL.ImageOps.autocontrast(keras.preprocessing.image.array_to_img(mask))
         name = get_name(input_img_paths[i])
-        saved_mask_png = save_dir + '\\%s.png'%name
+        saved_mask_png = save_dir + '/%s.png'%name
         arr = np.array(img)
         Image.fromarray(arr.astype(np.uint8)).save(saved_mask_png)
 

@@ -23,7 +23,7 @@ from contextlib import contextmanager
 
 
 def get_name(file_location):
-    filename = file_location.split('\\')[-1]
+    filename = file_location.split('/')[-1]
     filename = filename.split('.')
     return filename[0]
 
@@ -47,24 +47,24 @@ def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
     if os.path.isdir(lib_dir) is False:
         print('Creating training library folders')
         os.makedirs(lib_dir)
-        os.makedirs(lib_dir + '\\pics')
-        os.makedirs(lib_dir + '\\masks')
-    pics_dir = lib_dir + '\\pics'
-    masks_dir = lib_dir + '\\masks'
+        os.makedirs(lib_dir + '/pics')
+        os.makedirs(lib_dir + '/masks')
+    pics_dir = lib_dir + '/pics'
+    masks_dir = lib_dir + '/masks'
     
     
     
     ### Split mosic into tiles
     print('Splitting image: %s...'%fn)
-    with suppress_stdout(): ### suppress the long output
-        Split.split_image(input = img,
-                                output_dir = pics_dir,
-                                patch_w = w,
-                                patch_h = w,
-                                adj_overlay_x = Ovr,
-                                adj_overlay_y = Ovr,
-                                out_format = f
-                                )
+    # with suppress_stdout(): ### suppress the long output
+    Split.split_image(input = img,
+                            output_dir = pics_dir,
+                            patch_w = w,
+                            patch_h = w,
+                            adj_overlay_x = Ovr,
+                            adj_overlay_y = Ovr,
+                            out_format = f
+                            )
     os.remove('split_image_info.txt')
     
     
