@@ -56,15 +56,15 @@ def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
     
     ### Split mosic into tiles
     print('Splitting image: %s...'%fn)
-    # with suppress_stdout(): ### suppress the long output
-    Split.split_image(input = img,
-                            output_dir = pics_dir,
-                            patch_w = w,
-                            patch_h = w,
-                            adj_overlay_x = Ovr,
-                            adj_overlay_y = Ovr,
-                            out_format = f
-                            )
+    with suppress_stdout(): ### suppress the long output
+        Split.split_image(input = img,
+                                output_dir = pics_dir,
+                                patch_w = w,
+                                patch_h = w,
+                                adj_overlay_x = Ovr,
+                                adj_overlay_y = Ovr,
+                                out_format = f
+                                )
     os.remove('split_image_info.txt')
     
     

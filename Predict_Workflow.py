@@ -31,13 +31,13 @@ from contextlib import contextmanager
 
 
 def get_name(file_location):
-    filename = file_location.split('\\')[-1]
+    filename = file_location.split('/')[-1]
     filename = filename.split('.')
     return filename[0]
 
 def get_number(path, pattern):
     count = 0
-    for file in glob.glob(path + '\\' + pattern):
+    for file in glob.glob(path + '/' + pattern):
         count += 1
     return count
 
@@ -53,7 +53,7 @@ def suppress_stdout():
             sys.stdout = old_stdout
 
 
-def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
+def do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline):
 
     truths = gpd.read_file(path_t)
     crs = truths.crs
@@ -64,28 +64,28 @@ def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
     total = get_number(img_dir, '*tif')
     
     count = 1
-    for pic in glob.glob(img_dir + '\\*.tif'):
+    for pic in glob.glob(img_dir + '/*.tif'):
         
         if timeline:
             print('############################# \
-Timeline Image: %s / %s \
-####################################'%(count,total))
-        
-        out_dir = out_path
+                  Timeline Image: %s / %s \
+                      ####################################'%(count,total))
+    
+        out_path = out_dir
         fn = get_name(pic)
-        out_dir = out_dir + '\\' + fn
+        out_dir = out_dir + '/' + fn
 
         ### Build subfolders
         if os.path.isdir(out_dir) is False:
             os.makedirs(out_dir)
-            os.makedirs(out_dir + '\\tiles')
-            os.makedirs(out_dir + '\\predictions')
-            os.makedirs(out_dir + '\\map')
-            os.makedirs(out_dir + '\\metrics')
-        tiles_dir = out_dir + '\\tiles'
-        pred_dir = out_dir + '\\predictions'
-        map_dir = out_dir + '\\map'
-        met_dir = out_dir + '\\metrics'
+            os.makedirs(out_dir + '/tiles')
+            os.makedirs(out_dir + '/predictions')
+            os.makedirs(out_dir + '/map')
+            os.makedirs(out_dir + '/metrics')
+        tiles_dir = out_dir + '/tiles'
+        pred_dir = out_dir + '/predictions'
+        map_dir = out_dir + '/map'
+        met_dir = out_dir + '/metrics'
         
         
         ### Split mosic into tiles

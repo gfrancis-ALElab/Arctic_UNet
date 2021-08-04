@@ -15,7 +15,7 @@ email: gfrancis@uvic.ca
 
 import os
 home = os.path.expanduser('~')
-os.chdir(home + '/Documents/Arctic_UNet') ### directory with code
+os.chdir(home + '/repos/Arctic_UNet') ### directory with code
 
 ### Set OSGEO env PATHS
 os.environ['PROJ_LIB'] = '/usr/share/proj'
@@ -37,10 +37,10 @@ Train_name = 'WR_linux_test'
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-main_folder = home + '/Desktop/WR_test'
-img_dir = home + '/Desktop/NIR_G_R_mosaics_balanced'
-img = img_dir + '/20200818_mosaic_NIR_G_R_avg50_scaled.tif'
-path_t = home + '/Desktop/ground_truths'
+main_folder = home + '/Planet/WR'
+img_dir = main_folder + '/Data/NIR_G_R_mosaics'
+img = img_dir + '/20200818_mosaic_NIR_G_R_avg50_scaled0_255.tif'
+path_t = main_folder + '/Data/ground_truths'
 
 
 ### Training Library OUTPUT DIRECTORY
@@ -70,7 +70,7 @@ Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 lib = lib_dir
 c = 2 ### number of classes
 b = 8 ### batch size
-e = 20 ### epochs
+e = 2 ### epochs
 
 ### NAME FOR RUN:   (format as: model_dim_opt_batch_epochs_#augs_areaYYMMDD)
 name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
@@ -95,7 +95,7 @@ out_dir = lib_dir + '/Prediction_Map'
 ### SAVED MODEL NAME & DIRECTORY
 model_name = name + '.h5'
 saved_model = save_dir + '/' + model_name
-# saved_model = home +  r'\Documents\Planet\WR\saved_models\UNet_100x100_Ovr0_rmsprop_8b_40e_70000a_WR_8b_40e_70000_balanced.h5'
+# saved_model = 
 
 
 ### PARAMETERS:
