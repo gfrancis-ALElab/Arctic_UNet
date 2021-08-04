@@ -5,7 +5,7 @@ Created on Fri Apr 30 17:22:36 2021
 
 Full process sccript for building training library, training, & processing predition map
 last updated: 2021-08-03
-test
+
 
 @author: Grant Francis
 email: gfrancis@uvic.ca
