@@ -9,7 +9,7 @@ Functions to create .shp map from predition masks using corresponding original t
 @author: Grant Francis
 email: gfrancis@uvic.ca
 """
-### TODO: make faster by combining shapes without saving every one first
+### TODO: make faster by combining shapes without saving each one first
 
 import os
 import numpy as np

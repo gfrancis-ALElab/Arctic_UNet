@@ -85,12 +85,12 @@ def remove(lib, truths, overlap_only=True):
     
     
             if intersection.empty == True:
-                print('Removing: %s'%pic)
+                # print('Removing: %s'%pic)
                 os.remove(pic)
                 r += 1
-            else:
-                fn = get_name(pic)
-                print('Ground Truth Overlap at: %s'%fn)
+            # else:
+            #     fn = get_name(pic)
+                # print('Ground Truth Overlap at: %s'%fn)
         
             count += 1
         

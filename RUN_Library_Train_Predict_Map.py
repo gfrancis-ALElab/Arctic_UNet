@@ -55,7 +55,7 @@ f = 'GTIFF' ### output format
 ###    For: Augmentation
 aug = 101 ### number of augmented images to include in library
 ##############################################################################
-Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+#Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -79,7 +79,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 save_dir = main_folder + '/saved_models'
 callback_dir = save_dir + '/' + name
 ##############################################################################
-UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
+#UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -93,9 +93,10 @@ UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 out_dir = lib_dir + '/Prediction_Map'
 
 ### SAVED MODEL NAME & DIRECTORY
-model_name = name + '.h5'
-saved_model = save_dir + '/' + model_name
-# saved_model = 
+# model_name = name + '.h5'
+model_name = 'UNet_100x100_Ovr0_rmsprop_8b_40e_70000a_WR_8b_40e_70000_balanced.h5'
+# saved_model = save_dir + '/' + model_name
+saved_model = main_folder + '/saved_models/' + model_name
 
 
 ### PARAMETERS:
