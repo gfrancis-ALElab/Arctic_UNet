@@ -62,7 +62,9 @@ def combine_shps(map_dir, fn, truths):
         print('\nCascading predictions...')
         Map = gpd.read_file(map_dir + '/prediction_map.shp')
         crs = Map.crs
+        Map['geometry'] = Map.buffer(0.01)
         Map = gpd.GeoSeries(cascaded_union(Map['geometry']))
+        # Map = Map.unary_union
         Map = gpd.GeoDataFrame(geometry=Map, crs=crs)
         Map.to_file(map_dir + '/%s_cascaded_map.shp'%fn)
         print('Cascaded map saved as .SHP\n\n')

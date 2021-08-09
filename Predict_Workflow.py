@@ -90,29 +90,29 @@ def do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline):
         
         ### Split mosic into tiles
         print('Splitting image: %s...'%fn)
-        with suppress_stdout(): ### suppress the long output
-            Split.split_image(
-                            input = pic,
-                            output_dir = tiles_dir,
-                            patch_w = w,
-                            patch_h = w,
-                            adj_overlay_x = Ovr,
-                            adj_overlay_y = Ovr,
-                            out_format = f
-                            )
-        os.remove('split_image_info.txt')
+        # with suppress_stdout(): ### suppress the long output
+        #     Split.split_image(
+        #                     input = pic,
+        #                     output_dir = tiles_dir,
+        #                     patch_w = w,
+        #                     patch_h = w,
+        #                     adj_overlay_x = Ovr,
+        #                     adj_overlay_y = Ovr,
+        #                     out_format = f
+        #                     )
+        # os.remove('split_image_info.txt')
     
         
         ### Remove tiles that don't intersect ground truths & Re-number
-        Filter.remove(tiles_dir, truths, overlap_only=True)
+        # Filter.remove(tiles_dir, truths, overlap_only=True)
         
         
         ### convert to .JPEG
-        Convert.to_jpg(tiles_dir)
+        # Convert.to_jpg(tiles_dir)
         
         
         ### create & save predictions
-        UNet_Predict.deploy_model(saved_model, tiles_dir, pred_dir)
+        # UNet_Predict.deploy_model(saved_model, tiles_dir, pred_dir)
         
         
         ### create map from prediction tiles
