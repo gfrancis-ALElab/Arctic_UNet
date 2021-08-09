@@ -93,8 +93,8 @@ callback_dir = save_dir + '/' + name
 out_dir = lib_dir + '/Prediction_Map'
 
 ### SAVED MODEL NAME & DIRECTORY
-model_name = name + '.h5'
-# model_name = 'UNet_100x100_Ovr0_rmsprop_8b_40e_70000a_WR_8b_40e_70000_balanced.h5'
+# model_name = name + '.h5'
+model_name = 'UNet_100x100_Ovr0_rmsprop_8b_40e_70000a_WR_8b_40e_70000_balanced.h5'
 saved_model = save_dir + '/' + model_name
 
 ### PARAMETERS:
@@ -104,7 +104,7 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = False ### set to false for full metrics output
+timeline = False ### full metrics output only if False
 
 ### Reset Directories if making timeline
 if timeline:

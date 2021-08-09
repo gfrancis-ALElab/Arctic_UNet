@@ -142,12 +142,12 @@ def create_masks(truths_path, lib_dir, pics_dir, masks_dir, img):
 
 
 
-    if os.path.isdir(lib_dir + '/map') is False:
-        os.makedirs(lib_dir + '/map')
+    if os.path.isdir(lib_dir + '/LibMap') is False:
+        os.makedirs(lib_dir + '/LibMap')
 
-    joined_tiles.to_file(lib_dir + '/map/masked_tiles.shp')
-    truths.to_file(lib_dir + '/map/truths.shp')
-    shutil.copy(img, lib_dir + '/map')
+    joined_tiles.to_file(lib_dir + '/LibMap/masked_tiles.shp')
+    truths.to_file(lib_dir + '/LibMap/truths.shp')
+    shutil.copy(img, lib_dir + '/LibMap')
 
     print('masks & tile .shp files saved.')
 

@@ -89,7 +89,7 @@ def do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline):
         
         
         ### Split mosic into tiles
-        print('Splitting image: %s...'%fn)
+        # print('Splitting image: %s...'%fn)
         # with suppress_stdout(): ### suppress the long output
         #     Split.split_image(
         #                     input = pic,
@@ -112,7 +112,7 @@ def do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline):
         
         
         ### create & save predictions
-        # UNet_Predict.deploy_model(saved_model, tiles_dir, pred_dir)
+        UNet_Predict.deploy_model(saved_model, tiles_dir, pred_dir)
         
         
         ### create map from prediction tiles
