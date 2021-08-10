@@ -29,7 +29,7 @@ def augment_images(lib_dir, num_sample):
     flip_tb = True
     zoom = True
     
-    print('\nCreating augmented images')
+    print('\nCreating augmented images using:')
     
     pics_dir = lib_dir + '/pics'
     masks_dir = lib_dir + '/masks'
@@ -42,7 +42,6 @@ def augment_images(lib_dir, num_sample):
         print("%s: Ground: %s | Mask: %s" % 
               (i+1, os.path.basename(ground_truth_images[i]),
                os.path.basename(segmentation_mask_images[i])))
-    
     
     
     collated_images_and_masks = list(zip(ground_truth_images, 

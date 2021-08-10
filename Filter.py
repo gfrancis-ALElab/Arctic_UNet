@@ -20,6 +20,7 @@ import rasterio.features as features
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
+from PIL import Image
 from shapely import speedups
 speedups.disable()
 from shapely.geometry import shape
@@ -30,8 +31,9 @@ warnings.filterwarnings("ignore")
 
 
 
+###return True if bad & False if good
 def data_check(M):
-    return ((len(np.unique(M)) == 1) and (np.unique(M)[0] != 0))
+    return ((len(np.unique(M)) == 1) or (np.unique(M)[0] == 0))
 
 
 def get_name(file_location):
@@ -106,57 +108,48 @@ def remove(lib, truths, overlap_only=True):
         for pic in glob.glob(lib + '/*.tif'):
             os.rename(pic, lib + '/%s.tif'%count)
             count += 1
-        
-        return
+
     
-
-
-
-    else: ### keep all good tiles
+    print('\nFiltering any remaining bad tiles...')
     
-        print('\nFiltering bad tiles...')
+    for pic in glob.glob(lib + '/*.tif'):
         
-        count = 0
-        r = 0
-        for pic in glob.glob(lib + '/*.tif'):
+        # print('Filtering: %s / %s'%(count+1, total_tiles))
+    
+        img = Image.open(pic)
             
-            # print('Filtering: %s / %s'%(count+1, total_tiles))
-        
-            geo_list = []
-            with rasterio.open(pic) as dataset:
-        
-                # Read the dataset's valid data mask as a ndarray.
-                mask = dataset.dataset_mask()
-                meta = dataset.meta.copy()
-        
-                ### Skip over tile if missing data (blank white areas)
-                if not data_check(mask):
-                    dataset.close()
-                    os.remove(pic)
-                    r += 1
-                    count += 1
-                    continue
-                
-                if meta['height'] != meta['width']:
-                    dataset.close()
-                    os.remove(pic)
-                    r += 1                
-                    
+        geo_list = []
+        with rasterio.open(pic) as dataset:
     
-            count += 1
+            # Read the dataset's metadata
+            meta = dataset.meta.copy()
+    
+            ### remove tile if missing data (blank white areas)
+            if data_check(img):
+                dataset.close()
+                os.remove(pic)
+                r += 1
+                continue
+            
+            ### remove if not square
+            if meta['height'] != meta['width']:
+                dataset.close()
+                os.remove(pic)
+                r += 1                      
+
         
-        print('Total removed: %s'%r)
-        print('%s files remaining'%(total_tiles-r))
-        
-        print('Re-numbering...')
-        count = 0
-        for pic in glob.glob(lib + '/*.tif'):
-            os.rename(pic, lib + '/n%s.tif'%count)
-            count += 1
-        count = 0
-        for pic in glob.glob(lib + '/*.tif'):
-            os.rename(pic, lib + '/%s.tif'%count)
-            count += 1
+    print('Total removed: %s'%r)
+    print('%s files remaining'%(total_tiles-r))
+    
+    print('Re-numbering...')
+    count = 0
+    for pic in glob.glob(lib + '/*.tif'):
+        os.rename(pic, lib + '/n%s.tif'%count)
+        count += 1
+    count = 0
+    for pic in glob.glob(lib + '/*.tif'):
+        os.rename(pic, lib + '/%s.tif'%count)
+        count += 1
     
     return
 

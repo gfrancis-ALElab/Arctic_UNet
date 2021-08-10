@@ -29,7 +29,7 @@ import Predict_Workflow
 
 
 ### Name for training sequence
-Train_name = 'WR_linux_FULLtest'
+Train_name = 'WR_linux_LIBtest'
 
 
 
@@ -53,9 +53,9 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 65000 ### number of augmented images to include in library
+aug = 25 ### number of augmented images to include in library
 ##############################################################################
-# Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -111,7 +111,7 @@ if timeline:
     img_dir = home + r'\Documents\Planet\WR_timline\NIR_G_R_mosaics_balanced'
     out_dir = main_folder + r'\Timeline'
 ##############################################################################
-Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
+# Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
 
 

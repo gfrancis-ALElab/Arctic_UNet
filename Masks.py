@@ -45,6 +45,8 @@ def create_masks(truths_path, lib_dir, pics_dir, masks_dir, img):
         saved_mask = masks_dir + '/%s.tif'%i
         saved_mask_png = masks_dir + '/%s.png'%i
 
+
+        ### extract border of raster patch and convert to geometry
         geo_list = []
         with rasterio.open(Gtif) as dataset:
 
@@ -70,7 +72,7 @@ def create_masks(truths_path, lib_dir, pics_dir, masks_dir, img):
         df = pd.DataFrame(l)
         raster_outline = gpd.GeoDataFrame(geometry=df[0], crs=dataset.crs)
 
-        ### only consider ground truths included in current patch to save time
+        ### only consider if ground truths included in current patch
         intersection = gpd.overlay(truths, raster_outline, how='intersection')
 
 
@@ -112,33 +114,33 @@ def create_masks(truths_path, lib_dir, pics_dir, masks_dir, img):
                     os.remove(Gtif)
                     break
                 except:
-                    print('rename failed, retrying...')
+                    print('remove failed, retrying...')
 
             c_skip += 1
 
 
     print('\nTotal masks: %s\nTiles not used: %s'%(c_mask, c_skip))
-    print('Renumbering .jpgs and .png...')
+    # print('Renumbering .jpgs and .png...')
 
-    ### Re-number 0->N (.jpg tiles)
-    count = 0
-    for pic in glob.glob(pics_dir + '/*.jpg'):
-        os.rename(pic, pics_dir + '/N%s.jpg'%count)
-        count += 1
-    count = 0
-    for pic in glob.glob(pics_dir + '/*.jpg'):
-        os.rename(pic, pics_dir + '/%s.jpg'%count)
-        count += 1
+    # ### Re-number 0->N (.jpg tiles)
+    # count = 0
+    # for pic in glob.glob(pics_dir + '/*.jpg'):
+    #     os.rename(pic, pics_dir + '/N%s.jpg'%count)
+    #     count += 1
+    # count = 0
+    # for pic in glob.glob(pics_dir + '/*.jpg'):
+    #     os.rename(pic, pics_dir + '/%s.jpg'%count)
+    #     count += 1
         
-    ### Re-number 0->N (.png masks)
-    count = 0
-    for pic in glob.glob(masks_dir + '/*.png'):
-        os.rename(pic, masks_dir + '/N%s.png'%count)
-        count += 1
-    count = 0
-    for pic in glob.glob(masks_dir + '/*.png'):
-        os.rename(pic, masks_dir + '/%s.png'%count)
-        count += 1
+    # ### Re-number 0->N (.png masks)
+    # count = 0
+    # for pic in glob.glob(masks_dir + '/*.png'):
+    #     os.rename(pic, masks_dir + '/N%s.png'%count)
+    #     count += 1
+    # count = 0
+    # for pic in glob.glob(masks_dir + '/*.png'):
+    #     os.rename(pic, masks_dir + '/%s.png'%count)
+    #     count += 1
 
 
 
