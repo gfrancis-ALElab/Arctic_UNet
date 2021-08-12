@@ -70,7 +70,7 @@ def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
     
     truths = gpd.read_file(path_t)
     crs = truths.crs
-    print('\nCascading truths for analysis...')
+    # print('\nCascading truths for analysis...')
     truths = gpd.GeoSeries(cascaded_union(truths['geometry']))
     truths = gpd.GeoDataFrame(geometry=truths, crs=crs)
     

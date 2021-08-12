@@ -29,7 +29,7 @@ import Predict_Workflow
 
 
 ### Name for training sequence
-Train_name = 'WR_linux_LIBtest'
+Train_name = 'WR_repeattest'
 
 
 
@@ -53,9 +53,9 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 25 ### number of augmented images to include in library
+aug = 70000 ### number of augmented images to include in library
 ##############################################################################
-Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+# Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -89,13 +89,16 @@ callback_dir = save_dir + '/' + name
 
 ###       Deploy Trained Model & Prediction Map / Timeline Settings
 ##############################################################################
-### OUTPUT DIRECTORY (single map save location)
-out_dir = lib_dir + '/Prediction_Map'
+### DIRECOTY WITH IMAGE(S)
+img_dir = img_dir
 
 ### SAVED MODEL NAME & DIRECTORY
-# model_name = name + '.h5'
-model_name = 'UNet_100x100_Ovr0_rmsprop_8b_40e_70000a_WR_8b_40e_70000_balanced.h5'
+model_name = name + '.h5'
+# model_name = 'UNet_100x100_Ovr0_rmsprop_8b_40e_70000a_WR_8b_40e_70000_balanced.h5'
 saved_model = save_dir + '/' + model_name
+
+### OUTPUT DIRECTORY (single map save location)
+out_dir = lib_dir + '/PredMap_' + model_name
 
 ### PARAMETERS:
 ###    For: Split
@@ -111,7 +114,7 @@ if timeline:
     img_dir = home + r'\Documents\Planet\WR_timline\NIR_G_R_mosaics_balanced'
     out_dir = main_folder + r'\Timeline'
 ##############################################################################
-# Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
+Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
 
 
