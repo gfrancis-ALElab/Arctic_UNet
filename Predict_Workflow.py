@@ -53,7 +53,7 @@ def suppress_stdout():
             sys.stdout = old_stdout
 
 
-def do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline):
+def do_your_thang(img_dir, out_path, path_t, saved_model, w, Ovr, f, timeline):
 
     truths = gpd.read_file(path_t)
     crs = truths.crs
@@ -67,13 +67,12 @@ def do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline):
     for pic in glob.glob(img_dir + '/*.tif'):
         
         if timeline:
-            print('############################# \
+            print('########## \
                   Timeline Image: %s / %s \
-                      ####################################'%(count,total))
+                      ##########'%(count,total))
     
-        out_path = out_dir
         fn = get_name(pic)
-        out_dir = out_dir + '/' + fn
+        out_dir = out_path + '/' + fn
 
         ### Build subfolders
         if os.path.isdir(out_dir) is False:

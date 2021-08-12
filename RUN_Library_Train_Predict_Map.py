@@ -94,7 +94,7 @@ img_dir = img_dir
 
 ### SAVED MODEL NAME & DIRECTORY
 model_name = name + '.h5'
-# model_name = 'UNet_100x100_Ovr0_rmsprop_8b_40e_70000a_WR_8b_40e_70000_balanced.h5'
+# model_name = ''
 saved_model = save_dir + '/' + model_name
 
 ### OUTPUT DIRECTORY (single map save location)
@@ -107,12 +107,12 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = False ### full metrics output only if False
+timeline = True ### full metrics output only if False
 
 ### Reset Directories if making timeline
 if timeline:
-    img_dir = home + r'\Documents\Planet\WR_timline\NIR_G_R_mosaics_balanced'
-    out_dir = main_folder + r'\Timeline'
+    img_dir = '/home/feynman/Planet/WR_timeline/NIR_G_R_mosaics'
+    out_dir = home + '/Planet/WR_timeline/Timeline'
 ##############################################################################
 Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
