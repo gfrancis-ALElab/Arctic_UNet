@@ -14,8 +14,8 @@ Tool for deliniating & expanding on extent which predictions appear in at least
 import os
 home = os.path.expanduser('~')
 ### Set OSGEO env PATHS
-os.environ['PROJ_LIB'] = home + r'\Appdata\Roaming\Python\Python37\site-packages\osgeo\data\proj'
-os.environ['GDAL_DATA'] = home + r'\Appdata\Roaming\Python\Python37\site-packages\osgeo\data'
+os.environ['PROJ_LIB'] = '/usr/share/proj'
+os.environ['GDAL_DATA'] = '/usr/share/gdal'
 import glob
 import numpy as np
 import pandas as pd
@@ -30,21 +30,22 @@ import datetime
 import matplotlib.pyplot as plt
 plt.rcParams.update({'font.size': 14})
 import matplotlib.dates as mdates
-import matplotlib.ticker as ticker
+# import matplotlib.ticker as ticker
+from natsort import natsorted
 #%%
 
+maps_lib = home + '/Planet/WR_timeline/Timeline/Maps'
+pics_lib = home + '/Planet/WR_timeline/NIR_G_R_mosaics'
+out_dir = home + '/Planet/WR_timeline/Focused_Regions'
+truths_dir = home + '/Planet/WR/Data/ground_truths'
+rivers_dir = home + '/Planet/WR/Data/riverbeds'
 
-
-maps_lib = r'C:\Users\gfrancis\Documents\Planet\WR_timeline\Timeline\Maps'
-pics_lib = r'C:\Users\gfrancis\Documents\Planet\WR_timeline\NIR_G_R_mosaics_balanced'
-out_dir = r'C:\Users\gfrancis\Documents\Planet\WR_timeline\Priority_Regions'
-truths_dir = r'C:\Users\gfrancis\Documents\Planet\WR\Data\ground_truths'
-
-
+# move line into fxn
+rivers = gpd.read_file(rivers_dir)
 
 
 def get_name(file_location):
-    filename = file_location.split('\\')[-1]
+    filename = file_location.split('/')[-1]
     filename = filename.split('.')
     return filename[0]
 
@@ -64,7 +65,7 @@ def max_bounds(lib):
 
 ### thresh ### minimum faction of frames needing detection agreement
 ### win ### window size for sliding window filter
-def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win=10):
+def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win=8):
 
     if os.path.isdir(out_dir) is False:
         os.makedirs(out_dir)
@@ -75,19 +76,19 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     names_list = []
     print('Stacking prediction outputs...')
     count = 0
-    for raster in glob.glob(pics_lib + '/*.tif'):
+    for raster in natsorted(glob.glob(pics_lib + '/*.tif')):
     
         fn = get_name(raster)
         names_list.append(fn[2:10])
-        shapefile = maps_lib + '\\' + fn + r'_cascaded_map.shp'
+        shapefile = maps_lib + '/' + fn + '_cascaded_map.shp'
     
-        ras = rasterio.open(raster)
+        # ras = rasterio.open(raster)
         shapefile = gpd.read_file(shapefile)
 
         ### read in .SHP & convert to .GEOTIF to extract array from raster
         ### arrays are help individually in arr_list
         ### arrays are aggregated into arr_stack
-        temp = out_dir + r'\temp_%s.tif'%fn
+        temp = out_dir + '/temp_%s.tif'%fn
         with rasterio.open(temp, 'w+', **meta) as out:
             out_arr = out.read(1)
     
@@ -100,8 +101,8 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         ras_arr = rasterio.open(temp).read(1)
         os.remove(temp)
     
-        if os.path.isfile(temp + r'.aux.xml'):
-            os.remove(temp + r'.aux.xml')
+        if os.path.isfile(temp + '.aux.xml'):
+            os.remove(temp + '.aux.xml')
     
         if ras_arr.max() > 1:
             ras_arr = np.where(ras_arr > 1, 0, 1)
@@ -125,7 +126,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     
     
     ### save array as .GEOTIF with same meta data as before
-    saved = out_dir + '\\stack_%sperc.tif'%str(int(thresh*100))
+    saved = out_dir + '/stack_%sperc.tif'%str(int(thresh*100))
     meta['nodata'] = 0
     with rasterio.open(saved, 'w+', **meta) as out:
         out.write(filtered.astype(rasterio.uint8), 3) ### visulaize in blue
@@ -154,7 +155,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
     
-        # polys.to_file(out_dir + '\\stack_%sperc.shp'%str(int(thresh*100)))
+        # polys.to_file(out_dir + '/stack_%sperc.shp'%str(int(thresh*100)))
     
     
     ### remove polygons that don't overlap ground truths
@@ -163,11 +164,11 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     polys['mask'] = list(polys.intersects(truths.unary_union))
     polys_overlap = polys[polys['mask'] == True].geometry
     polys_overlap = gpd.GeoDataFrame(polys_overlap)
-    # polys_overlap.to_file(out_dir + '\\overlap_stack_%sperc.shp'%str(int(thresh*100)))
+    # polys_overlap.to_file(out_dir + '/overlap_stack_%sperc.shp'%str(int(thresh*100)))
     
     
     ### project filtered & overlapped polygons back into raster for buffer filter
-    temp = out_dir + r'\temp.tif'
+    temp = out_dir + '/temp.tif'
     with rasterio.open(temp, 'w+', **meta) as out:
         out_arr = out.read(1)
     
@@ -180,23 +181,24 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     ras_arr2 = rasterio.open(temp).read(1)
     os.remove(temp)
     
-    if os.path.isfile(temp + r'.aux.xml'):
-        os.remove(temp + r'.aux.xml')
+    if os.path.isfile(temp + '.aux.xml'):
+        os.remove(temp + '.aux.xml')
     
     
     ### Create buffer around polygons
     ### using sliding window max filter
-    s = np.int(win/2)
+    s = np.int64(win/2)
     expanded = np.zeros(ras_arr2.shape)
+    # expanded = ras_arr2
     
-    print('Performing sliding window max filtering...\n(window size: %s pixels)'%str(s*2))
+    print('Performing sliding window max filtering...\n(window size: %sx%s pixels)'%(str(s*2),str(s*2)))
     for j in range(s, ras_arr2[:,0].size - s):
         for i in range(s, ras_arr2[0,:].size - s):
             expanded[j, i] = np.max(ras_arr2[j-s:j+s, i-s:i+s])
     
     
     ### save array as .GEOTIF with same meta data as before
-    saved = out_dir + '\\Priority_%sthresh_%sbuffer.tif'%(str(int(thresh*100)), win)
+    saved = out_dir + '/Priority_%sthresh_%sbuffer.tif'%(str(int(thresh*100)), win)
     meta['nodata'] = 0
     with rasterio.open(saved, 'w+', **meta) as out:
         out.write(expanded.astype(rasterio.uint8), 3) ### visulaize in blue
@@ -223,8 +225,17 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys_exp = gpd.GeoDataFrame(geometry=df[0], crs=crs)
-    
-        polys_exp.to_file(out_dir + '\\Priority_%sthresh_%sbuffer.shp'%(str(int(thresh*100)), win))
+        ### subtract riverbeds
+        polys_exp = gpd.overlay(polys_exp, rivers, how='difference')
+        polys_exp = polys_exp.explode()
+        ### remove separated polygons that don't overlap ground truths
+        polys_exp['mask'] = list(polys_exp.intersects(truths.unary_union))
+        polys_overlap_exp = polys_exp[polys_exp['mask'] == True].geometry
+        polys_overlap_exp = gpd.GeoDataFrame(polys_overlap_exp)
+        polys_overlap_exp.to_file(out_dir + '/Priority_%sthresh_%sbuffer.shp'%(str(int(thresh*100)), win))
+        priority_ids = gpd.read_file(out_dir)
+        priority_ids['Id'] = priority_ids[priority_ids.columns[0]].index
+        priority_ids.to_file(out_dir + '/Priority_%sthresh_%sbuffer.shp'%(str(int(thresh*100)), win))
         print('Priority regions saved.')
 
 
@@ -235,29 +246,29 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         arr_list_clipped.append(np.where(expanded==1, arr_list[i], 0))
 
 
-    return stack_clipped, arr_list_clipped, meta, names_list
+    return stack_clipped, arr_list_clipped, meta, names_list, priority_ids
 
 
 
-Stack, List, meta, dates = stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
+Stack, List, meta, dates, priority = stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir)
 
 
 
-#%%    Process stack list into cumulative list & difference list
+#%%    Process stack list into list of cumulatives & differences
 
-if os.path.isdir(out_dir + r'\cumulatives') is False:
-    os.makedirs(out_dir + r'\cumulatives')
-    os.makedirs(out_dir + r'\differences')
-c_out = out_dir + r'\cumulatives'
-d_out = out_dir + r'\differences'
+if os.path.isdir(out_dir + '/cumulatives') is False:
+    os.makedirs(out_dir + '/cumulatives')
+    os.makedirs(out_dir + '/differences')
+c_out = out_dir + '/cumulatives'
+d_out = out_dir + '/differences'
 
 ### create cumulative list stack in which each is the union of all previous
 cumulative = [List[0]]
-Image.fromarray(np.uint8(cumulative[0]*255)).save(c_out + '\\%s.jpg'%dates[0])
+Image.fromarray(np.uint8(cumulative[0]*255)).save(c_out + '/%s.jpg'%dates[0])
 
 for i in range(1,len(List)):
     cumulative.append(np.where((List[i]+cumulative[i-1])>0, 1, 0))
-    Image.fromarray(np.uint8(cumulative[i]*255)).save(c_out + '\\%s.jpg'%dates[i])
+    Image.fromarray(np.uint8(cumulative[i]*255)).save(c_out + '/%s.jpg'%dates[i])
 
 ### stack & list consecutive differences
 diff = np.zeros(cumulative[0].shape)
@@ -265,16 +276,17 @@ diff_list = []
 for i in range(len(cumulative)-1):
     diff += cumulative[i+1] - cumulative[i]
     diff_list.append(cumulative[i+1] - cumulative[i])
-    Image.fromarray(np.uint8(diff_list[i]*255)).save(d_out + '\\%s.jpg'%dates[i])
+    Image.fromarray(np.uint8(diff_list[i]*255)).save(d_out + '/%s.jpg'%dates[i])
 
 
-#%%    Convert & save .SHP files for cumulatives and differences
-    
+#%%    Convert to .SHP files (cumulatives & differences) & subtract riverbeds before saving
+
+
 print('Saving cumulative regions as .SHP files')
 for i in range(len(cumulative)):
     
     ### save array as .GEOTIF with same meta data as before
-    temp = c_out + '\\temp_%s.tif'%dates[i]
+    temp = c_out + '/temp_%s.tif'%dates[i]
     meta['nodata'] = 0
     with rasterio.open(temp, 'w+', **meta) as out:
         out.write(cumulative[i].astype(rasterio.uint8), 3) ### visulaize in blue
@@ -302,8 +314,12 @@ for i in range(len(cumulative)):
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
-    
-        polys.to_file(c_out + '\\%s.shp'%dates[i])
+        polys = gpd.overlay(polys, rivers, how='difference')
+        polys = polys.explode()
+        polys['mask'] = list(polys.intersects(priority.unary_union))
+        polys_overlap = polys[polys['mask'] == True].geometry
+        polys_overlap = gpd.GeoDataFrame(polys_overlap)
+        polys_overlap.to_file(c_out + '/%s.shp'%dates[i])
     
     ### delete temporary raster
     os.remove(temp)
@@ -315,7 +331,7 @@ print('Saving extent changes as .SHP files')
 for i in range(len(diff_list)):
     
     ### save array as .GEOTIF with same meta data as before
-    temp = d_out + '\\temp_%s.tif'%dates[i+1]
+    temp = d_out + '/temp_%s.tif'%dates[i+1]
     meta['nodata'] = 0
     with rasterio.open(temp, 'w+', **meta) as out:
         out.write(diff_list[i].astype(rasterio.uint8), 3) ### visulaize in blue
@@ -343,47 +359,68 @@ for i in range(len(diff_list)):
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
-    
-        polys.to_file(d_out + '\\%s.shp'%dates[i+1])
+        polys = gpd.overlay(polys, rivers, how='difference')
+        polys = polys.explode()
+        polys['mask'] = list(polys.intersects(priority.unary_union))
+        polys_overlap = polys[polys['mask'] == True].geometry
+        polys_overlap = gpd.GeoDataFrame(polys_overlap)
+        polys_overlap.to_file(d_out + '/%s.shp'%dates[i+1])
     
     ### delete temporary raster
     os.remove(temp)
-    if os.path.isfile(temp + r'.aux.xml'):
-        os.remove(temp + r'.aux.xml')
+    if os.path.isfile(temp + '.aux.xml'):
+        os.remove(temp + '.aux.xml')
+
+
+
+#%% Give individual features truth overlap Id, Dissolve & give areas
+
+
+for Map in glob.glob(c_out + '/*.shp'):
+
+    mapped = gpd.read_file(Map)
+    
+    intersecting = []
+    for index, row in mapped.iterrows():
+        
+        intersecting.append(priority[priority.geometry.intersects(row['geometry'])].Id.tolist()[0])
+    
+    
+    mapped['Id'] = intersecting
+    mapped = mapped.dissolve('Id')
+    mapped['area'] = mapped['geometry'].area*0.0001 ### area in ha
+    mapped.to_file(Map)
 
 
 
 #%%    Compile Total Area Timeline
 
-def area(df):
-    df['area'] = df['geometry'].area
-    return np.sum(df['area']) ### area in m^2
-
+area_ci = []
 area_c = []
 Dates = []
 i = 0
-for shapefile in glob.glob(c_out + '/*.shp'):
+for shapefile in natsorted(glob.glob(c_out + '/*.shp')):
     
-    shapes = gpd.read_file(shapefile)
-    area_c.append(area(shapes))
     Dates.append(datetime.date(int(dates[i][:4]), int(dates[i][4:6]), int(dates[i][6:])))
-    i+=1
-
-
-area_d = []
-i = 0
-for shapefile in glob.glob(d_out + '/*.shp'):
-    
     shapes = gpd.read_file(shapefile)
-    area_d.append(area(shapes))
+    area_ci.append(list(zip(shapes['area'].tolist(), shapes['Id'].tolist())))
+    area_c.append(np.sum(shapes['area'].tolist()))
     i+=1
 
-### convert to ha
-area_c = np.array(area_c)*0.0001
+# area_di = []
+# area_d = []
+# i = 0
+# for shapefile in natsorted(glob.glob(d_out + '/*.shp')):
+    
+#     shapes = gpd.read_file(shapefile)
+#     area_di.append((shapes.area.tolist(), shapes['Id'].tolist()))
+#     area_d.append(np.sum(shapes['area'].tolist()))
+#     i+=1
+
 
 #%%    Plot timelines
 
-fig_lib = r'C:\Users\gfrancis\Documents\Figures'
+fig_lib = home + '/Planet/WR_timeline'
 
 
 plt.figure(figsize=(20,10))
@@ -393,7 +430,7 @@ plt.ylabel('Area [ha]')
 plt.xlabel('Date [YYYY]')
 plt.title('Willow River\nThaw Slump Extent\n(within 50 $km^2$ AOI)')
 # plt.tight_layout()
-plt.savefig(fig_lib + '\\timeline_scatter.svg', format="svg")
+# plt.savefig(fig_lib + '/timeline_scatter.svg', format="svg")
 
 
 #%%
@@ -456,21 +493,29 @@ plt.ylabel('Area [ha]')
 plt.xlabel('Date [Mon.]')
 plt.title('Willow River\nThaw Slump Extent\n(within 50 $km^2$ AOI)')
 # plt.tight_layout()
-plt.savefig(fig_lib + '\\timeline_seasonal_bw.svg', format="svg")
+# plt.savefig(fig_lib + '/timeline_seasonal_bw.svg', format="svg")
 
 
+#%% Create table of individuate area timelines
+
+slump_areas = np.zeros((len(priority['Id']), len(Dates)))
+
+i = 0
+for item in area_ci:
+    for element in item:
+        slump_areas[element[1], i] = element[0]
+    i += 1
 
 
+#%% Plot individual timelines
 
+plt.figure()
+for i in range(len(slump_areas[:,0])):
 
-
-
-
-
-
-
-
-
-
+    plt.plot(Dates, slump_areas[i,:], label='Id: %s'%i)
+    plt.ylabel('Area [ha]')
+    plt.xlabel('Date [YYYY]')
+    plt.title('Willow River\nIndividual Thaw Slump Extent\n(within 50 $km^2$ AOI)')
+plt.legend(fontsize=7, loc=(1,0))
 
 
