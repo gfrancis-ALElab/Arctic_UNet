@@ -51,7 +51,7 @@ def get_name(file_location):
 
 
 def max_bounds(lib):
-    
+
     h = w = 0
     for raster in glob.glob(lib + '/*.tif'):
         r = rasterio.open(raster)
@@ -59,7 +59,7 @@ def max_bounds(lib):
             h = r.meta['height']
         if r.meta['width'] > w:
             w = r.meta['width']
-    
+
     return h, w, r.meta
 
 
@@ -69,7 +69,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
 
     if os.path.isdir(out_dir) is False:
         os.makedirs(out_dir)
-    
+
     h, w, meta = max_bounds(pics_lib)
     arr_stack = np.zeros((h, w))
     arr_list = []
@@ -77,11 +77,11 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     print('Stacking prediction outputs...')
     count = 0
     for raster in natsorted(glob.glob(pics_lib + '/*.tif')):
-    
+
         fn = get_name(raster)
         names_list.append(fn[2:10])
         shapefile = maps_lib + '/' + fn + '_cascaded_map.shp'
-    
+
         # ras = rasterio.open(raster)
         shapefile = gpd.read_file(shapefile)
 
@@ -91,22 +91,22 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         temp = out_dir + '/temp_%s.tif'%fn
         with rasterio.open(temp, 'w+', **meta) as out:
             out_arr = out.read(1)
-    
+
             # this is where we create a generator of geom, value pairs to use in rasterizing
             shapes = (geom for geom in shapefile.geometry)
-    
+
             burned = features.rasterize(shapes=shapes, fill=0, out=out_arr, transform=out.transform)
             out.write_band(1, burned)
-    
+
         ras_arr = rasterio.open(temp).read(1)
         os.remove(temp)
-    
+
         if os.path.isfile(temp + '.aux.xml'):
             os.remove(temp + '.aux.xml')
-    
+
         if ras_arr.max() > 1:
             ras_arr = np.where(ras_arr > 1, 0, 1)
-    
+
         if ras_arr.shape == arr_stack.shape:
             arr_stack += ras_arr
             arr_list.append(ras_arr)
@@ -115,49 +115,49 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
             temp_arr = np.zeros(arr_stack.shape)
             temp_arr[:ras_arr.shape[0], :ras_arr.shape[1]] += ras_arr
             arr_list.append(temp_arr)
-    
+
         count += 1
-    
-    
+
+
     ### filter out everything below 20th percentile
     ### threshold is 20% of max prominance in stack
     cut = arr_stack.max()*(thresh)
     filtered = np.where(arr_stack > cut, 1, 0)
-    
-    
+
+
     ### save array as .GEOTIF with same meta data as before
     saved = out_dir + '/stack_%sperc.tif'%str(int(thresh*100))
     meta['nodata'] = 0
     with rasterio.open(saved, 'w+', **meta) as out:
         out.write(filtered.astype(rasterio.uint8), 3) ### visulaize in blue
-    
-    
+
+
     ### convert .GEOTIF into .SHP
     with rasterio.open(saved) as data:
-    
+
         crs = data.crs
         M = data.dataset_mask()
         mask = M != 0
-    
+
         geo_list = []
         for g, val in features.shapes(M, transform=data.transform, mask=mask):
-    
+
             # Transform shapes from the dataset's own coordinate system
             geom = rasterio.warp.transform_geom(
                 crs, crs, g, precision=6)
             geo_list.append(geom)
-    
+
     l = []
     for k in range(len(geo_list)):
         l.append(shape(geo_list[k]))
-    
+
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
-    
+
         # polys.to_file(out_dir + '/stack_%sperc.shp'%str(int(thresh*100)))
-    
-    
+
+
     ### remove polygons that don't overlap ground truths
     print('Applying truths overlap filter')
     truths = gpd.read_file(truths_dir)
@@ -165,63 +165,63 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     polys_overlap = polys[polys['mask'] == True].geometry
     polys_overlap = gpd.GeoDataFrame(polys_overlap)
     # polys_overlap.to_file(out_dir + '/overlap_stack_%sperc.shp'%str(int(thresh*100)))
-    
-    
+
+
     ### project filtered & overlapped polygons back into raster for buffer filter
     temp = out_dir + '/temp.tif'
     with rasterio.open(temp, 'w+', **meta) as out:
         out_arr = out.read(1)
-    
+
         # this is where we create a generator of geom, value pairs to use in rasterizing
         shapes = (geom for geom in polys_overlap.geometry)
-    
+
         burned = features.rasterize(shapes=shapes, fill=0, out=out_arr, transform=out.transform)
         out.write_band(1, burned)
-    
+
     ras_arr2 = rasterio.open(temp).read(1)
     os.remove(temp)
-    
+
     if os.path.isfile(temp + '.aux.xml'):
         os.remove(temp + '.aux.xml')
-    
-    
+
+
     ### Create buffer around polygons
     ### using sliding window max filter
     s = np.int64(win/2)
     expanded = np.zeros(ras_arr2.shape)
     # expanded = ras_arr2
-    
+
     print('Performing sliding window max filtering...\n(window size: %sx%s pixels)'%(str(s*2),str(s*2)))
     for j in range(s, ras_arr2[:,0].size - s):
         for i in range(s, ras_arr2[0,:].size - s):
             expanded[j, i] = np.max(ras_arr2[j-s:j+s, i-s:i+s])
-    
-    
+
+
     ### save array as .GEOTIF with same meta data as before
     saved = out_dir + '/Priority_%sthresh_%sbuffer.tif'%(str(int(thresh*100)), win)
     meta['nodata'] = 0
     with rasterio.open(saved, 'w+', **meta) as out:
         out.write(expanded.astype(rasterio.uint8), 3) ### visulaize in blue
-    
-    
+
+
     with rasterio.open(saved) as data:
-    
+
         crs = data.crs
         M = data.dataset_mask()
         mask = M != 0
-    
+
         geo_list = []
         for g, val in features.shapes(M, transform=data.transform, mask=mask):
-    
+
             # Transform shapes from the dataset's own coordinate system
             geom = rasterio.warp.transform_geom(
                 crs, crs, g, precision=6)
             geo_list.append(geom)
-    
+
     l = []
     for k in range(len(geo_list)):
         l.append(shape(geo_list[k]))
-    
+
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys_exp = gpd.GeoDataFrame(geometry=df[0], crs=crs)
@@ -284,33 +284,33 @@ for i in range(len(cumulative)-1):
 
 print('Saving cumulative regions as .SHP files')
 for i in range(len(cumulative)):
-    
+
     ### save array as .GEOTIF with same meta data as before
     temp = c_out + '/temp_%s.tif'%dates[i]
     meta['nodata'] = 0
     with rasterio.open(temp, 'w+', **meta) as out:
         out.write(cumulative[i].astype(rasterio.uint8), 3) ### visulaize in blue
-    
-    
+
+
     ### convert .GEOTIF into .SHP
     with rasterio.open(temp) as data:
-    
+
         crs = data.crs
         M = data.dataset_mask()
         mask = M != 0
-    
+
         geo_list = []
         for g, val in features.shapes(M, transform=data.transform, mask=mask):
-    
+
             # Transform shapes from the dataset's own coordinate system
             geom = rasterio.warp.transform_geom(
                 crs, crs, g, precision=6)
             geo_list.append(geom)
-    
+
     l = []
     for k in range(len(geo_list)):
         l.append(shape(geo_list[k]))
-    
+
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
@@ -320,42 +320,42 @@ for i in range(len(cumulative)):
         polys_overlap = polys[polys['mask'] == True].geometry
         polys_overlap = gpd.GeoDataFrame(polys_overlap)
         polys_overlap.to_file(c_out + '/%s.shp'%dates[i])
-    
+
     ### delete temporary raster
     os.remove(temp)
     if os.path.isfile(temp + r'.aux.xml'):
         os.remove(temp + r'.aux.xml')
-    
+
 
 print('Saving extent changes as .SHP files')
 for i in range(len(diff_list)):
-    
+
     ### save array as .GEOTIF with same meta data as before
     temp = d_out + '/temp_%s.tif'%dates[i+1]
     meta['nodata'] = 0
     with rasterio.open(temp, 'w+', **meta) as out:
         out.write(diff_list[i].astype(rasterio.uint8), 3) ### visulaize in blue
-    
-    
+
+
     ### convert .GEOTIF into .SHP
     with rasterio.open(temp) as data:
-    
+
         crs = data.crs
         M = data.dataset_mask()
         mask = M != 0
-    
+
         geo_list = []
         for g, val in features.shapes(M, transform=data.transform, mask=mask):
-    
+
             # Transform shapes from the dataset's own coordinate system
             geom = rasterio.warp.transform_geom(
                 crs, crs, g, precision=6)
             geo_list.append(geom)
-    
+
     l = []
     for k in range(len(geo_list)):
         l.append(shape(geo_list[k]))
-    
+
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
@@ -365,7 +365,7 @@ for i in range(len(diff_list)):
         polys_overlap = polys[polys['mask'] == True].geometry
         polys_overlap = gpd.GeoDataFrame(polys_overlap)
         polys_overlap.to_file(d_out + '/%s.shp'%dates[i+1])
-    
+
     ### delete temporary raster
     os.remove(temp)
     if os.path.isfile(temp + '.aux.xml'):
@@ -379,13 +379,13 @@ for i in range(len(diff_list)):
 for Map in glob.glob(c_out + '/*.shp'):
 
     mapped = gpd.read_file(Map)
-    
+
     intersecting = []
     for index, row in mapped.iterrows():
-        
+
         intersecting.append(priority[priority.geometry.intersects(row['geometry'])].Id.tolist()[0])
-    
-    
+
+
     mapped['Id'] = intersecting
     mapped = mapped.dissolve('Id')
     mapped['area'] = mapped['geometry'].area*0.0001 ### area in ha
@@ -400,7 +400,7 @@ area_c = []
 Dates = []
 i = 0
 for shapefile in natsorted(glob.glob(c_out + '/*.shp')):
-    
+
     Dates.append(datetime.date(int(dates[i][:4]), int(dates[i][4:6]), int(dates[i][6:])))
     shapes = gpd.read_file(shapefile)
     area_ci.append(list(zip(shapes['area'].tolist(), shapes['Id'].tolist())))
@@ -411,7 +411,7 @@ for shapefile in natsorted(glob.glob(c_out + '/*.shp')):
 # area_d = []
 # i = 0
 # for shapefile in natsorted(glob.glob(d_out + '/*.shp')):
-    
+
 #     shapes = gpd.read_file(shapefile)
 #     area_di.append((shapes.area.tolist(), shapes['Id'].tolist()))
 #     area_d.append(np.sum(shapes['area'].tolist()))
@@ -447,7 +447,7 @@ ni = []
 tw = []
 
 for i in range(len(area_c)):
-    
+
     if Dates[i] < datetime.date(2012, 1, 1):
         el.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
     elif Dates[i] < datetime.date(2013, 1, 1):
@@ -468,8 +468,8 @@ for i in range(len(area_c)):
         ni.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
     else:
         tw.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
-        
-        
+
+
 #%%
 seasons = [tw, ni, ei, se, si, fi, fo, th, tv, el]
 years = ['2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011']
@@ -517,5 +517,3 @@ for i in range(len(slump_areas[:,0])):
     plt.xlabel('Date [YYYY]')
     plt.title('Willow River\nIndividual Thaw Slump Extent\n(within 50 $km^2$ AOI)')
 plt.legend(fontsize=7, loc=(1,0))
-
-
