@@ -114,7 +114,7 @@ if timeline:
     img_dir = '/home/feynman/Planet/WR_timeline/NIR_G_R_mosaics'
     out_dir = home + '/Planet/WR_timeline/Timeline'
 ##############################################################################
-Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
+# Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
 
 

@@ -39,6 +39,7 @@ pics_lib = home + '/Planet/WR_timeline/NIR_G_R_mosaics'
 out_dir = home + '/Planet/WR_timeline/Focused_Regions'
 truths_dir = home + '/Planet/WR/Data/ground_truths'
 rivers_dir = home + '/Planet/WR/Data/riverbeds'
+fig_lib = home + '/Documents/figures'
 
 # move line into fxn
 rivers = gpd.read_file(rivers_dir)
@@ -419,8 +420,6 @@ for shapefile in natsorted(glob.glob(c_out + '/*.shp')):
 
 
 #%%    Plot timelines
-
-fig_lib = home + '/Planet/WR_timeline'
 
 
 plt.figure(figsize=(20,10))
