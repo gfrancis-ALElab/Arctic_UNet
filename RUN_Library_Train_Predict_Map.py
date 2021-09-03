@@ -29,7 +29,7 @@ import Predict_Workflow
 
 
 ### Name for training sequence
-Train_name = 'WR_repeattest'
+Train_name = 'Banks_feynman'
 
 
 
@@ -37,9 +37,9 @@ Train_name = 'WR_repeattest'
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-main_folder = home + '/Planet/WR'
+main_folder = home + '/Planet/Banks'
 img_dir = main_folder + '/Data/NIR_G_R_mosaics'
-img = img_dir + '/20200818_mosaic_NIR_G_R_avg50_scaled0_255.tif'
+img = img_dir + '/Banks_Island_mosaic_NIR_G_R_avg50_scaled0_255.tif'
 path_t = main_folder + '/Data/ground_truths'
 
 
@@ -79,7 +79,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 save_dir = main_folder + '/saved_models'
 callback_dir = save_dir + '/' + name
 ##############################################################################
-# UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
+UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -107,14 +107,14 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = True ### full metrics output only if False
+timeline = False ### full metrics output only if False
 
 ### Reset Directories if making timeline
 if timeline:
     img_dir = '/home/feynman/Planet/WR_timeline/NIR_G_R_mosaics'
     out_dir = home + '/Planet/WR_timeline/Timeline'
 ##############################################################################
-# Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
+Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 
 
 
