@@ -55,7 +55,7 @@ f = 'GTIFF' ### output format
 ###    For: Augmentation
 aug = 70000 ### number of augmented images to include in library
 ##############################################################################
-Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+# Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -79,7 +79,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 save_dir = main_folder + '/saved_models'
 callback_dir = save_dir + '/' + name
 ##############################################################################
-UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
+# UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -107,12 +107,12 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = False ### full metrics output only if False
+timeline = True ### full metrics output only if False
 
 ### Reset Directories if making timeline
 if timeline:
-    img_dir = '/home/feynman/Planet/WR_timeline/NIR_G_R_mosaics'
-    out_dir = home + '/Planet/WR_timeline/Timeline'
+    img_dir = home + '/Planet/Banks_timeline/NIR_G_R_mosaics'
+    out_dir = home + '/Planet/Banks_timeline/Timeline'
 ##############################################################################
 Predict_Workflow.do_your_thang(img_dir, out_dir, path_t, saved_model, w, Ovr, f, timeline)
 

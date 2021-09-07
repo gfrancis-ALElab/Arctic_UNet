@@ -34,15 +34,15 @@ import matplotlib.dates as mdates
 from natsort import natsorted
 #%%
 
-maps_lib = home + '/Planet/WR_timeline/Timeline/Maps'
-pics_lib = home + '/Planet/WR_timeline/NIR_G_R_mosaics'
-out_dir = home + '/Planet/WR_timeline/Focused_Regions'
-truths_dir = home + '/Planet/WR/Data/ground_truths'
-rivers_dir = home + '/Planet/WR/Data/riverbeds'
+maps_lib = home + '/Planet/Banks_timeline/Timeline/Maps'
+pics_lib = home + '/Planet/Banks_timeline/NIR_G_R_mosaics'
+out_dir = home + '/Planet/Banks_timeline/Focused_Regions'
+truths_dir = home + '/Planet/Banks/Data/ground_truths'
+# rivers_dir = home + '/Planet/WR/Data/riverbeds'
 fig_lib = home + '/Documents/figures'
 
 # move line into fxn
-rivers = gpd.read_file(rivers_dir)
+# rivers = gpd.read_file(rivers_dir)
 
 
 def get_name(file_location):
@@ -80,7 +80,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     for raster in natsorted(glob.glob(pics_lib + '/*.tif')):
 
         fn = get_name(raster)
-        names_list.append(fn[2:10])
+        names_list.append(fn[:8])
         shapefile = maps_lib + '/' + fn + '_cascaded_map.shp'
 
         # ras = rasterio.open(raster)
@@ -155,7 +155,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
-
+        polys['geometry'] = polys.buffer(0)
         # polys.to_file(out_dir + '/stack_%sperc.shp'%str(int(thresh*100)))
 
 
@@ -227,7 +227,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         df = pd.DataFrame(l)
         polys_exp = gpd.GeoDataFrame(geometry=df[0], crs=crs)
         ### subtract riverbeds
-        polys_exp = gpd.overlay(polys_exp, rivers, how='difference')
+        # polys_exp = gpd.overlay(polys_exp, rivers, how='difference')
         polys_exp = polys_exp.explode()
         ### remove separated polygons that don't overlap ground truths
         polys_exp['mask'] = list(polys_exp.intersects(truths.unary_union))
@@ -282,10 +282,11 @@ for i in range(len(cumulative)-1):
 
 #%%    Convert to .SHP files (cumulatives & differences) & subtract riverbeds before saving
 
+priority['geometry'] = priority.buffer(0)
 
 print('Saving cumulative regions as .SHP files')
 for i in range(len(cumulative)):
-
+    
     ### save array as .GEOTIF with same meta data as before
     temp = c_out + '/temp_%s.tif'%dates[i]
     meta['nodata'] = 0
@@ -315,8 +316,9 @@ for i in range(len(cumulative)):
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
-        polys = gpd.overlay(polys, rivers, how='difference')
+        # polys = gpd.overlay(polys, rivers, how='difference')
         polys = polys.explode()
+        # polys['geometry'] = polys.buffer(0)
         polys['mask'] = list(polys.intersects(priority.unary_union))
         polys_overlap = polys[polys['mask'] == True].geometry
         polys_overlap = gpd.GeoDataFrame(polys_overlap)
@@ -360,8 +362,9 @@ for i in range(len(diff_list)):
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
-        polys = gpd.overlay(polys, rivers, how='difference')
+        # polys = gpd.overlay(polys, rivers, how='difference')
         polys = polys.explode()
+        # polys['geometry'] = polys.buffer(0)
         polys['mask'] = list(polys.intersects(priority.unary_union))
         polys_overlap = polys[polys['mask'] == True].geometry
         polys_overlap = gpd.GeoDataFrame(polys_overlap)
