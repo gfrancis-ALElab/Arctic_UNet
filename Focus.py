@@ -318,7 +318,7 @@ for i in range(len(cumulative)):
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
         # polys = gpd.overlay(polys, rivers, how='difference')
         polys = polys.explode()
-        # polys['geometry'] = polys.buffer(0)
+        polys['geometry'] = polys.buffer(0)
         polys['mask'] = list(polys.intersects(priority.unary_union))
         polys_overlap = polys[polys['mask'] == True].geometry
         polys_overlap = gpd.GeoDataFrame(polys_overlap)
@@ -364,7 +364,7 @@ for i in range(len(diff_list)):
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
         # polys = gpd.overlay(polys, rivers, how='difference')
         polys = polys.explode()
-        # polys['geometry'] = polys.buffer(0)
+        polys['geometry'] = polys.buffer(0)
         polys['mask'] = list(polys.intersects(priority.unary_union))
         polys_overlap = polys[polys['mask'] == True].geometry
         polys_overlap = gpd.GeoDataFrame(polys_overlap)
@@ -447,6 +447,7 @@ se = []
 ei = []
 ni = []
 tw = []
+to = []
 
 for i in range(len(area_c)):
 
@@ -468,20 +469,24 @@ for i in range(len(area_c)):
         ei.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
     elif Dates[i] < datetime.date(2020, 1, 1):
         ni.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
-    else:
+    elif Dates[i] < datetime.date(2021, 1, 1):
         tw.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
-
+    else:
+        to.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
 
 #%%
-seasons = [tw, ni, ei, se, si, fi, fo, th, tv, el]
-years = ['2020', '2019', '2018', '2017', '2016', '2015', '2014', '2013', '2012', '2011']
+seasons = [to, tw, ni, ei, se, si, fi, fo, th, tv, el]
+years = ['2021', '2020', '2019', '2018', '2017',
+         '2016', '2015', '2014', '2013', '2012', '2011']
 m = ['x', 'o', 'v', '2', 's', '+', 'D', '^', '*', 'd']
 
 fig, ax = plt.subplots(figsize=(8,10))
 c = 0
 for series in seasons:
-    # ax.scatter(*zip(*series), s=7, label=years[c])
-    ax.plot(*zip(*series), ':', color='black', linewidth=1, marker=m[c], markersize=4, label=years[c])
+    if len(series) > 0:
+        # ax.scatter(*zip(*series), s=7, label=years[c])
+        ax.plot(*zip(*series), ':', color='black', linewidth=1,
+                marker=m[c], markersize=4, label=years[c])
     c += 1
 Fmt = mdates.DateFormatter('%b')
 ax.xaxis.set_major_formatter(Fmt)
@@ -518,4 +523,4 @@ for i in range(len(slump_areas[:,0])):
     plt.ylabel('Area [ha]')
     plt.xlabel('Date [YYYY]')
     plt.title('Willow River\nIndividual Thaw Slump Extent\n(within 50 $km^2$ AOI)')
-plt.legend(fontsize=7, loc=(1,0))
+plt.legend(fontsize=5, loc=(1,0))
