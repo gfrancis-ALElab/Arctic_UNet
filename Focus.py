@@ -66,7 +66,7 @@ def max_bounds(lib):
 
 ### thresh ### minimum faction of frames needing detection agreement
 ### win ### window size for sliding window filter
-def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win=8):
+def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win=10):
 
     if os.path.isdir(out_dir) is False:
         os.makedirs(out_dir)
@@ -430,9 +430,9 @@ plt.scatter(Dates, area_c, color='black', s=7)
 # plt.plot(Dates[1:], area_d)
 plt.ylabel('Area [ha]')
 plt.xlabel('Date [YYYY]')
-plt.title('Willow River\nThaw Slump Extent\n(within 50 $km^2$ AOI)')
-# plt.tight_layout()
-# plt.savefig(fig_lib + '/timeline_scatter.svg', format="svg")
+plt.title('Banks Island\nThaw Slump Extent\n(within ~50 $km^2$ AOI)')
+plt.tight_layout()
+plt.savefig(fig_lib + '/Banks_full_win10.svg', format="svg")
 
 
 #%%
@@ -498,9 +498,9 @@ plt.xticks(Ticks)
 plt.legend(loc=(0.86,0.12))
 plt.ylabel('Area [ha]')
 plt.xlabel('Date [Mon.]')
-plt.title('Willow River\nThaw Slump Extent\n(within 50 $km^2$ AOI)')
-# plt.tight_layout()
-# plt.savefig(fig_lib + '/timeline_seasonal_bw.svg', format="svg")
+plt.title('Banks Island\nThaw Slump Extent\n(within ~50 $km^2$ AOI)')
+plt.tight_layout()
+plt.savefig(fig_lib + '/Banks_seasonal_win10.svg', format="svg")
 
 
 #%% Create table of individuate area timelines
@@ -522,5 +522,5 @@ for i in range(len(slump_areas[:,0])):
     plt.plot(Dates, slump_areas[i,:], label='Id: %s'%i)
     plt.ylabel('Area [ha]')
     plt.xlabel('Date [YYYY]')
-    plt.title('Willow River\nIndividual Thaw Slump Extent\n(within 50 $km^2$ AOI)')
+    plt.title('Banks Island\nIndividual Thaw Slump Extent\n(within ~50 $km^2$ AOI)')
 plt.legend(fontsize=5, loc=(1,0))
