@@ -524,3 +524,21 @@ for i in range(len(slump_areas[:,0])):
     plt.xlabel('Date [YYYY]')
     plt.title('Banks Island\nIndividual Thaw Slump Extent\n(within ~50 $km^2$ AOI)')
 plt.legend(fontsize=5, loc=(1,0))
+
+
+#%% Save Slump ID area change table as .CSV
+
+slump_area_data = pd.DataFrame(np.transpose(slump_areas))
+slump_area_data.insert(0, 'Date', Dates)
+
+slump_area_data.to_csv(out_dir + '/slump_data.csv', index=False)
+
+
+
+
+
+
+
+
+
+
