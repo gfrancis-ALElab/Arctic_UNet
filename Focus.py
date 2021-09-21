@@ -6,6 +6,8 @@ Created on Mon May 31 12:29:20 2021
 Tool for deliniating & expanding on extent which predictions appear in at least
 (THRESH) fractoin of timeline images. Boundary expansion is adjusted with (WIN)
 
+NOTE: change plot titles etc. when changing region
+
 
 @author: gfrancis
 """
