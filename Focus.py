@@ -65,6 +65,7 @@ def max_bounds(lib):
 
     return h, w, r.meta
 
+#%%
 
 ### thresh ### minimum faction of frames needing detection agreement
 ### win ### window size for sliding window filter
@@ -264,6 +265,8 @@ if os.path.isdir(out_dir + '/cumulatives') is False:
     os.makedirs(out_dir + '/differences')
 c_out = out_dir + '/cumulatives'
 d_out = out_dir + '/differences'
+
+#%%
 
 ### create cumulative list stack in which each is the union of all previous
 cumulative = [List[0]]

@@ -29,7 +29,7 @@ import Predict_Workflow
 
 
 ### Name for training sequence
-Train_name = 'Banks_feynman'
+Train_name = 'HWC_full'
 
 
 
@@ -37,10 +37,10 @@ Train_name = 'Banks_feynman'
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-main_folder = home + '/Planet/Banks'
+main_folder = home + '/Planet/HWC'
 img_dir = main_folder + '/Data/NIR_G_R_mosaics'
-img = img_dir + '/Banks_Island_mosaic_NIR_G_R_avg50_scaled0_255.tif'
-path_t = main_folder + '/Data/ground_truths'
+img = img_dir + '/HWC_clipped2_NIR_G_R_avg50_scaled0_255.tif'
+path_t = main_folder + '/Data/Slumps'
 
 
 ### Training Library OUTPUT DIRECTORY
@@ -53,7 +53,7 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 70000 ### number of augmented images to include in library
+aug = 35000 ### number of augmented images to include in library
 ##############################################################################
 # Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
@@ -79,7 +79,7 @@ name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
 save_dir = main_folder + '/saved_models'
 callback_dir = save_dir + '/' + name
 ##############################################################################
-# UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
+UNet_Train.get_smarter(lib, name, callback_dir, save_dir, c, b, e)
 
 
 
@@ -107,7 +107,7 @@ Ovr = 25 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ### Build Timeline?
-timeline = True ### full metrics output only if False
+timeline = False ### full metrics output only if False
 
 ### Reset Directories if making timeline
 if timeline:
