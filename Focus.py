@@ -36,15 +36,15 @@ import matplotlib.dates as mdates
 from natsort import natsorted
 #%%
 
-maps_lib = home + '/Planet/Banks_timeline/Timeline/Maps'
-pics_lib = home + '/Planet/Banks_timeline/NIR_G_R_mosaics'
-out_dir = home + '/Planet/Banks_timeline/Focused_Regions'
-truths_dir = home + '/Planet/Banks/Data/ground_truths'
-# rivers_dir = home + '/Planet/WR/Data/riverbeds'
+maps_lib = home + '/Planet/WR_Timeline/WR_Timeline_Maps'
+pics_lib = home + '/Planet/WR_Timeline/NIR_G_R_mosaics'
+out_dir = home + '/Planet/WR_Timeline/Focused_Regions'
+truths_dir = home + '/Planet/WR/Data/ground_truths'
+rivers_dir = home + '/Planet/WR/Data/rivers' ############################### comment out/in
 fig_lib = home + '/Documents/figures'
 
 # move line into fxn
-# rivers = gpd.read_file(rivers_dir)
+rivers = gpd.read_file(rivers_dir) ############################################# comment out/in
 
 
 def get_name(file_location):
@@ -230,7 +230,7 @@ def stack_filter_expand(maps_lib, pics_lib, out_dir, truths_dir, thresh=0.2, win
         df = pd.DataFrame(l)
         polys_exp = gpd.GeoDataFrame(geometry=df[0], crs=crs)
         ### subtract riverbeds
-        # polys_exp = gpd.overlay(polys_exp, rivers, how='difference')
+        polys_exp = gpd.overlay(polys_exp, rivers, how='difference') ########### Comment out/in
         polys_exp = polys_exp.explode()
         ### remove separated polygons that don't overlap ground truths
         polys_exp['mask'] = list(polys_exp.intersects(truths.unary_union))
@@ -266,7 +266,7 @@ if os.path.isdir(out_dir + '/cumulatives') is False:
 c_out = out_dir + '/cumulatives'
 d_out = out_dir + '/differences'
 
-#%%
+
 
 ### create cumulative list stack in which each is the union of all previous
 cumulative = [List[0]]
@@ -321,7 +321,7 @@ for i in range(len(cumulative)):
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
-        # polys = gpd.overlay(polys, rivers, how='difference')
+        polys = gpd.overlay(polys, rivers, how='difference') ################### comment out/in
         polys = polys.explode()
         polys['geometry'] = polys.buffer(0)
         polys['mask'] = list(polys.intersects(priority.unary_union))
@@ -367,7 +367,7 @@ for i in range(len(diff_list)):
     if len(l) > 0:
         df = pd.DataFrame(l)
         polys = gpd.GeoDataFrame(geometry=df[0], crs=crs)
-        # polys = gpd.overlay(polys, rivers, how='difference')
+        polys = gpd.overlay(polys, rivers, how='difference') ################### comment out/in
         polys = polys.explode()
         polys['geometry'] = polys.buffer(0)
         polys['mask'] = list(polys.intersects(priority.unary_union))
@@ -437,7 +437,7 @@ plt.ylabel('Area [ha]')
 plt.xlabel('Date [YYYY]')
 plt.title('Banks Island\nThaw Slump Extent\n(within ~50 $km^2$ AOI)')
 plt.tight_layout()
-plt.savefig(fig_lib + '/Banks_full_win10.svg', format="svg")
+# plt.savefig(fig_lib + '/Banks_full_win10.svg', format="svg") ################## comment out/in
 
 
 #%%
@@ -480,9 +480,9 @@ for i in range(len(area_c)):
         to.append((datetime.date(1, Dates[i].month, Dates[i].day), area_c[i]))
 
 #%%
-seasons = [to, tw, ni, ei, se, si, fi, fo, th, tv, el]
-years = ['2021', '2020', '2019', '2018', '2017',
-         '2016', '2015', '2014', '2013', '2012', '2011']
+seasons = [tw, ni, ei, se, si, fi, fo, th, tv, el]
+years = ['2020', '2019', '2018', '2017',
+         '2016', '2015', '2014', '2013', '2012', '2011'] ###################### update years to match
 m = ['x', 'o', 'v', '2', 's', '+', 'D', '^', '*', 'd']
 
 fig, ax = plt.subplots(figsize=(8,10))
@@ -505,7 +505,7 @@ plt.ylabel('Area [ha]')
 plt.xlabel('Date [Mon.]')
 plt.title('Banks Island\nThaw Slump Extent\n(within ~50 $km^2$ AOI)')
 plt.tight_layout()
-plt.savefig(fig_lib + '/Banks_seasonal_win10.svg', format="svg")
+# plt.savefig(fig_lib + '/Banks_seasonal_win10.svg', format="svg") ############## comment out/in
 
 
 #%% Create table of individuate area timelines
