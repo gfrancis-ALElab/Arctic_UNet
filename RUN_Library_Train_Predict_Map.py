@@ -29,7 +29,7 @@ import Predict_Workflow
 
 
 ### Name for training sequence
-Train_name = 'HWC_full'
+Train_name = 'HWC_fullLARGE'
 
 
 
@@ -39,7 +39,7 @@ Train_name = 'HWC_full'
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
 main_folder = home + '/Planet/HWC'
 img_dir = main_folder + '/Data/NIR_G_R_mosaics'
-img = img_dir + '/HWC_clipped2_NIR_G_R_avg50_scaled0_255.tif'
+img = img_dir + '/HotWeatherCreek_Mosaic_NIR_G_R_avg50_scaled0_255.tif'
 path_t = main_folder + '/Data/Slumps'
 
 
@@ -53,9 +53,9 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 35000 ### number of augmented images to include in library
+aug = 70000 ### number of augmented images to include in library
 ##############################################################################
-# Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
