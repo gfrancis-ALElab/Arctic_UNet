@@ -29,7 +29,7 @@ import Predict_Workflow
 
 
 ### Name for training sequence
-Train_name = 'HWC_full'
+Train_name = 'dry_run'
 
 
 
@@ -39,7 +39,7 @@ Train_name = 'HWC_full'
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
 main_folder = home + '/Planet/HWC'
 img_dir = main_folder + '/Data/NIR_G_R_mosaics'
-# img = img_dir + '/HotWeatherCreek_Mosaic_NIR_G_R_avg50_scaled0_255.tif'
+img = img_dir + '/HotWeatherCreek_Mosaic_NIR_G_R_avg50_scaled0_255.tif'
 path_t = main_folder + '/Data/Slumps'
 
 
@@ -53,9 +53,9 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 70000 ### number of augmented images to include in library
+aug = 555 ### number of augmented images to include in library
 ##############################################################################
-# Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
+Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
 
 
@@ -70,7 +70,7 @@ aug = 70000 ### number of augmented images to include in library
 lib = lib_dir
 c = 2 ### number of classes (DON'T CHANGE THIS)
 b = 8 ### batch size
-e = 100 ### epochs
+e = 2 ### epochs
 
 ### NAME FOR RUN:   (format as: model_dim_opt_batch_epochs_#augs_areaYYMMDD)
 name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name
