@@ -29,7 +29,7 @@ import Predict_Workflow
 
 
 ### Name for training sequence
-Train_name = 'dry_run'
+Train_name = 'conda_test_run'
 
 
 
@@ -39,7 +39,7 @@ Train_name = 'dry_run'
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
 main_folder = home + '/Planet/HWC'
 img_dir = main_folder + '/Data/NIR_G_R_mosaics'
-img = img_dir + '/HotWeatherCreek_Mosaic_NIR_G_R_avg50_scaled0_255.tif'
+img = img_dir + '/HWC_clipped1_NIR_G_R_avg50_scaled0_255.tif'
 path_t = main_folder + '/Data/Slumps'
 
 

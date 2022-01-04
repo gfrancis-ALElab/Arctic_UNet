@@ -5,13 +5,13 @@ Created on Tue Feb 23 15:18:37 2021
 @author: gfrancis
 """
 
-import numpy as np
+# import numpy as np
 
-import os
+# import os
 # os.environ['PROJ_LIB'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data\\proj'
 # os.environ['GDAL_DATA'] = 'C:\\Users\\gfrancis\\Appdata\\Roaming\\Python\\Python37\\site-packages\\osgeo\\data'
 import geopandas as gpd
-from osgeo import gdal
+# from osgeo import gdal
 import pandas as pd
 
 from shapely import speedups
