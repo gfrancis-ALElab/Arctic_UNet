@@ -29,7 +29,7 @@ import Predict_Workflow
 
 
 ### Name for training sequence
-Train_name = 'conda_test_run'
+Train_name = 'update_test_run'
 
 
 
@@ -37,10 +37,10 @@ Train_name = 'conda_test_run'
 ###                 Training Library Build Settings
 ##############################################################################
 ### INPUT DIRECTORIES: training image (.GEOTIFF), ground truths (.SHP)
-main_folder = home + '/Planet/HWC'
+main_folder = home + '/Planet/Banks'
 img_dir = main_folder + '/Data/NIR_G_R_mosaics'
-img = img_dir + '/HWC_clipped1_NIR_G_R_avg50_scaled0_255.tif'
-path_t = main_folder + '/Data/Slumps'
+img = img_dir + '/Banks_Island_mosaic_NIR_G_R_avg50_scaled0_255.tif'
+path_t = main_folder + '/Data/ground_truths'
 
 
 ### Training Library OUTPUT DIRECTORY
