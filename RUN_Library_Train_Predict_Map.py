@@ -53,7 +53,7 @@ Ovr = 0 ### overlap (pixels)
 f = 'GTIFF' ### output format
 
 ###    For: Augmentation
-aug = 555 ### number of augmented images to include in library
+aug = 5 ### number of augmented images to include in library
 ##############################################################################
 Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 
@@ -70,7 +70,7 @@ Library_Workflow.create_library(img, path_t, lib_dir, w, Ovr, f, aug)
 lib = lib_dir
 c = 2 ### number of classes (DON'T CHANGE THIS)
 b = 8 ### batch size
-e = 2 ### epochs
+e = 1 ### epochs
 
 ### NAME FOR RUN:   (format as: model_dim_opt_batch_epochs_#augs_areaYYMMDD)
 name = 'UNet_%sx%s_Ovr%s_rmsprop_%sb_%se_%sa_'%(w,w,Ovr,b,e,aug) + Train_name

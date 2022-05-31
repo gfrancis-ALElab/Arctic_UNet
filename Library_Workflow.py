@@ -45,7 +45,7 @@ def create_library(img, path_t, lib_dir, w, Ovr, f, aug):
 
     ### Build subfolders
     if os.path.isdir(lib_dir) is False:
-        print('\nCreating training library folders')
+        print('\nCreating training library folders at: ' + lib_dir)
         os.makedirs(lib_dir)
         os.makedirs(lib_dir + '/pics')
         os.makedirs(lib_dir + '/masks')
